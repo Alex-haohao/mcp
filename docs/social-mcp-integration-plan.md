@@ -121,7 +121,7 @@ flowchart LR
     XhsMcp --> XhsCookie["cookie/session data volume"]
 ```
 
-Deploy `xpzouying/xiaohongshu-mcp` separately from the bridge:
+Deploy `xpzouying/xiaohongshu-mcp` separately from the bridge. The Docker path is best for a cloud server:
 
 ```bash
 docker pull xpzouying/xiaohongshu-mcp
@@ -130,7 +130,23 @@ docker compose up -d
 docker compose logs -f
 ```
 
+For a local or one-off smoke test, use an official release binary. The version verified in this project is `v2026.05.28.0902-17500db`:
+
+```bash
+mkdir -p /tmp/xhs-mcp-smoke
+cd /tmp/xhs-mcp-smoke
+curl -L --fail -o xhs.tar.gz \
+  https://github.com/xpzouying/xiaohongshu-mcp/releases/download/v2026.05.28.0902-17500db/xiaohongshu-mcp-darwin-arm64.tar.gz
+tar -xzf xhs.tar.gz
+chmod +x xiaohongshu-mcp-darwin-arm64
+./xiaohongshu-mcp-darwin-arm64 -port :18060
+```
+
+On Linux servers, use the matching `xiaohongshu-mcp-linux-amd64.tar.gz` or `xiaohongshu-mcp-linux-arm64.tar.gz` release asset.
+
 Then complete login as an admin-only operation. Do not expose login, cookie deletion, or publishing tools through XiaoZhi.
+
+The first browser-backed tool call may download Chromium through the upstream Rod browser launcher. Keep that cache on the server to avoid repeated downloads.
 
 After the service is reachable:
 
@@ -161,6 +177,12 @@ Expected result:
 ```text
 Call failed: Tool is not allowed by bridge policy: publish_content
 ```
+
+Verified local results:
+
+- `scripts/smoke_mcp_server.py xiaohongshu-mcp` listed only the five bridge-allowed tools.
+- `scripts/call_mcp_tool.py xiaohongshu-mcp check_login_status --arguments '{}'` reached the upstream service and returned `未登录`, which is the expected result before admin login.
+- `mcp_pipe.py xiaohongshu-mcp` connected to the real `MCP_ENDPOINT`, started `mcp_proxy`, connected to `http://127.0.0.1:18060/mcp`, and processed a `ListToolsRequest`.
 
 ## Weibo Verification
 
@@ -214,4 +236,3 @@ The integration is complete when:
 6. If `XIAOHONGSHU_MCP_URL` is configured and the Xiaohongshu service is running, `scripts/smoke_mcp_server.py xiaohongshu-mcp` lists only allowed tools.
 7. Xiaohongshu write tools are blocked by bridge policy.
 8. `mcp_pipe.py` can connect to `MCP_ENDPOINT` and expose the enabled tools to XiaoZhi.
-
