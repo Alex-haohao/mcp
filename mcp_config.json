@@ -13,6 +13,28 @@
       },
       "enabledIfEnv": "VOLCENGINE_SEARCH_API_KEY"
     },
+    "weibo": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "mcp-server-weibo==1.1.0",
+        "mcp-server-weibo",
+        "stdio"
+      ]
+    },
+    "xiaohongshu-mcp": {
+      "type": "streamablehttp",
+      "url": "${XIAOHONGSHU_MCP_URL}",
+      "enabledIfEnv": "XIAOHONGSHU_MCP_URL",
+      "allowedTools": [
+        "check_login_status",
+        "list_feeds",
+        "search_feeds",
+        "get_feed_detail",
+        "user_profile"
+      ]
+    },
     "remote-sse-server": {
       "type": "sse",
       "url": "https://api.example.com/sse",

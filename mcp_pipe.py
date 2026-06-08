@@ -35,6 +35,7 @@ from mcp_bridge.config import load_bridge_config_from_env
 from mcp_bridge.runtime_env import build_child_base_env, ensure_executable_available
 from mcp_bridge.secrets import collect_sensitive_values, redact_argv, redact_text
 from mcp_bridge.server_command import build_server_command as build_configured_server_command
+from mcp_bridge.tool_policy import ToolPolicy
 
 # Auto-load environment variables from a .env file if present
 ROOT_DIR = Path(__file__).resolve().parent
@@ -81,6 +82,8 @@ async def connect_to_server(uri, target):
 
             # Start server process (built from CLI arg or config)
             cmd, env = build_server_command(target)
+            config = load_config()
+            tool_policy = ToolPolicy.from_server(config.servers.get(target))
             ensure_executable_available(cmd[0], env)
             process = subprocess.Popen(
                 cmd,
@@ -97,8 +100,8 @@ async def connect_to_server(uri, target):
             
             # Create two tasks: read from WebSocket and write to process, read from process and write to WebSocket
             await asyncio.gather(
-                pipe_websocket_to_process(websocket, process, target),
-                pipe_process_to_websocket(process, websocket, target),
+                pipe_websocket_to_process(websocket, process, target, tool_policy),
+                pipe_process_to_websocket(process, websocket, target, tool_policy),
                 pipe_process_stderr_to_terminal(process, target, secret_values)
             )
     except websockets.exceptions.ConnectionClosed as e:
@@ -118,7 +121,7 @@ async def connect_to_server(uri, target):
                 process.kill()
             logger.info(f"[{target}] Server process terminated")
 
-async def pipe_websocket_to_process(websocket, process, target):
+async def pipe_websocket_to_process(websocket, process, target, tool_policy):
     """Read data from WebSocket and write to process stdin"""
     try:
         while True:
@@ -129,6 +132,11 @@ async def pipe_websocket_to_process(websocket, process, target):
             # Write to process stdin (in text mode)
             if isinstance(message, bytes):
                 message = message.decode('utf-8')
+            blocked_response = tool_policy.blocked_request_response(message)
+            if blocked_response:
+                logger.warning(f"[{target}] Blocked disallowed tool call by bridge policy")
+                await websocket.send(blocked_response)
+                continue
             process.stdin.write(message + '\n')
             process.stdin.flush()
     except Exception as e:
@@ -139,7 +147,7 @@ async def pipe_websocket_to_process(websocket, process, target):
         if not process.stdin.closed:
             process.stdin.close()
 
-async def pipe_process_to_websocket(process, websocket, target):
+async def pipe_process_to_websocket(process, websocket, target, tool_policy):
     """Read data from process stdout and send to WebSocket"""
     try:
         while True:
@@ -153,7 +161,7 @@ async def pipe_process_to_websocket(process, websocket, target):
             # Send data to WebSocket
             logger.debug(f"[{target}] >> {data[:120]}...")
             # In text mode, data is already a string, no need to decode
-            await websocket.send(data)
+            await websocket.send(tool_policy.filter_process_message(data))
     except Exception as e:
         logger.error(f"[{target}] Error in process to WebSocket pipe: {e}")
         raise  # Re-throw exception to trigger reconnection

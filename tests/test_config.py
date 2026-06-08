@@ -115,6 +115,26 @@ class BridgeConfigTests(unittest.TestCase):
             ["conditional-server", "always-server"],
         )
 
+    def test_load_bridge_config_preserves_tool_policy_lists(self):
+        path = self.write_config(
+            {
+                "mcpServers": {
+                    "xiaohongshu-mcp": {
+                        "type": "streamablehttp",
+                        "url": "http://127.0.0.1:18060/mcp",
+                        "allowedTools": ["check_login_status", "search_feeds"],
+                        "blockedTools": ["publish_content"],
+                    }
+                }
+            }
+        )
+
+        config = load_bridge_config(path=path, environ={})
+        server = config.servers["xiaohongshu-mcp"]
+
+        self.assertEqual(server.allowedTools, ["check_login_status", "search_feeds"])
+        self.assertEqual(server.blockedTools, ["publish_content"])
+
     def test_secret_redaction_masks_sensitive_mapping_values_and_text(self):
         redacted = redact_mapping(
             {

@@ -7,6 +7,8 @@ The current production target is Volcengine Web Search through the official Volc
 ## Current Tooling
 
 - `volcengine-web-search`: official Volcengine web-search MCP server, launched with `uvx`.
+- `weibo`: Weibo MCP server from `qinyuanpei/mcp-server-weibo`, launched with pinned `mcp-server-weibo==1.1.0`.
+- `xiaohongshu-mcp`: Xiaohongshu MCP HTTP service from `xpzouying/xiaohongshu-mcp`, enabled only when `XIAOHONGSHU_MCP_URL` is set and restricted to read-only tools.
 - `remote-sse-server` / `remote-http-server`: disabled examples for remote MCP transports.
 
 ## Requirements
@@ -38,6 +40,7 @@ Create `.env` locally or on the server. Start from `.env.example`:
 ```dotenv
 MCP_ENDPOINT=<your_xiaozhi_mcp_endpoint>
 VOLCENGINE_SEARCH_API_KEY=<your_volcengine_web_search_api_key>
+XIAOHONGSHU_MCP_URL=
 ```
 
 Keep Agent Plan model credentials separate from the web-search credential. The current bridge only needs `VOLCENGINE_SEARCH_API_KEY` for the search MCP server.
@@ -83,6 +86,19 @@ To run one real search query after the key is configured:
 ```
 
 This consumes Volcengine web-search quota.
+
+List tools for any configured server:
+
+```bash
+.venv/bin/python scripts/smoke_mcp_server.py weibo
+.venv/bin/python scripts/smoke_mcp_server.py xiaohongshu-mcp
+```
+
+Call one MCP tool directly:
+
+```bash
+.venv/bin/python scripts/call_mcp_tool.py weibo get_trendings --arguments '{"limit":1}'
+```
 
 ## Configuration
 
@@ -137,3 +153,7 @@ The tests cover config loading, environment interpolation, secret redaction, and
 Use the systemd unit template at `deploy/xiaozhi-mcp.service` on the cloud server. A full deployment plan is documented in:
 
 [docs/volcengine-agent-plan-mcp-architecture.md](docs/volcengine-agent-plan-mcp-architecture.md)
+
+Social platform MCP integration details are documented in:
+
+[docs/social-mcp-integration-plan.md](docs/social-mcp-integration-plan.md)

@@ -105,6 +105,8 @@ class McpServerConfig(BaseModel):
     disabled: bool = False
     enabled: bool | None = None
     enabledIfEnv: str | list[str] | None = None
+    allowedTools: list[str] = Field(default_factory=list)
+    blockedTools: list[str] = Field(default_factory=list)
     policy: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("args", mode="before")
@@ -114,6 +116,15 @@ class McpServerConfig(BaseModel):
             return []
         if not isinstance(value, list):
             raise ValueError("'args' must be a list")
+        return [str(item) for item in value]
+
+    @field_validator("allowedTools", "blockedTools", mode="before")
+    @classmethod
+    def normalize_tool_names(cls, value: Any) -> list[str]:
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            raise ValueError("tool policy lists must be lists")
         return [str(item) for item in value]
 
     @field_validator("headers", "env", mode="before")
