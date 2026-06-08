@@ -150,7 +150,19 @@ The tests cover config loading, environment interpolation, secret redaction, and
 
 ## Deployment
 
-Use the systemd unit template at `deploy/xiaozhi-mcp.service` on the cloud server. A full deployment plan is documented in:
+Use the deployment script for the cloud server:
+
+```bash
+.venv/bin/python scripts/deploy_server.py
+```
+
+It deploys into release directories under `/opt/xiaozhi-mcp`, keeps runtime secrets in `/opt/xiaozhi-mcp/shared/.env`, installs the systemd unit from `deploy/xiaozhi-mcp.service`, and restarts `xiaozhi-mcp`.
+
+Server deployment operations are documented in:
+
+[docs/server-deployment-runbook.md](docs/server-deployment-runbook.md)
+
+A full architecture plan is documented in:
 
 [docs/volcengine-agent-plan-mcp-architecture.md](docs/volcengine-agent-plan-mcp-architecture.md)
 

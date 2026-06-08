@@ -7,14 +7,20 @@ Wants=network-online.target
 Type=simple
 User=xiaozhi-mcp
 Group=xiaozhi-mcp
-WorkingDirectory=/opt/xiaozhi-mcp
-EnvironmentFile=/opt/xiaozhi-mcp/.env
-ExecStart=/opt/xiaozhi-mcp/.venv/bin/python /opt/xiaozhi-mcp/mcp_pipe.py
+WorkingDirectory=/opt/xiaozhi-mcp/current
+Environment=HOME=/var/lib/xiaozhi-mcp
+Environment=UV_CACHE_DIR=/var/cache/xiaozhi-mcp/uv
+Environment=UV_PYTHON_INSTALL_DIR=/var/cache/xiaozhi-mcp/python
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=/opt/xiaozhi-mcp/shared/.env
+ExecStart=/opt/xiaozhi-mcp/current/.venv/bin/python /opt/xiaozhi-mcp/current/mcp_pipe.py
 Restart=always
 RestartSec=5
+LogsDirectory=xiaozhi-mcp
+StandardOutput=append:/var/log/xiaozhi-mcp/bridge.log
+StandardError=append:/var/log/xiaozhi-mcp/bridge.log
 NoNewPrivileges=true
 PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
-
