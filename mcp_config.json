@@ -1,9 +1,17 @@
 {
   "mcpServers": {
-    "local-stdio-calculator": {
+    "volcengine-web-search": {
       "type": "stdio",
-      "command": "python",
-      "args": ["-m", "calculator"]
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/volcengine/mcp-server@69d102e079ca74acedd5ec48eeeb24b148efb36e#subdirectory=server/mcp_server_askecho_search_infinity",
+        "mcp-server-askecho-search-infinity"
+      ],
+      "env": {
+        "ASK_ECHO_SEARCH_INFINITY_API_KEY": "${VOLCENGINE_SEARCH_API_KEY}"
+      },
+      "enabledIfEnv": "VOLCENGINE_SEARCH_API_KEY"
     },
     "remote-sse-server": {
       "type": "sse",

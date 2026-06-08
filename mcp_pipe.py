@@ -27,11 +27,18 @@ import logging
 import os
 import signal
 import sys
-import json
+from pathlib import Path
+
 from dotenv import load_dotenv
 
+from mcp_bridge.config import load_bridge_config_from_env
+from mcp_bridge.runtime_env import build_child_base_env, ensure_executable_available
+from mcp_bridge.secrets import collect_sensitive_values, redact_argv, redact_text
+from mcp_bridge.server_command import build_server_command as build_configured_server_command
+
 # Auto-load environment variables from a .env file if present
-load_dotenv()
+ROOT_DIR = Path(__file__).resolve().parent
+load_dotenv(ROOT_DIR / ".env")
 
 # Configure logging
 logging.basicConfig(
@@ -48,6 +55,7 @@ async def connect_with_retry(uri, target):
     """Connect to WebSocket server with retry mechanism for a given server target."""
     reconnect_attempt = 0
     backoff = INITIAL_BACKOFF
+    secret_values = collect_sensitive_values(os.environ)
     while True:  # Infinite reconnection
         try:
             if reconnect_attempt > 0:
@@ -59,7 +67,8 @@ async def connect_with_retry(uri, target):
 
         except Exception as e:
             reconnect_attempt += 1
-            logger.warning(f"[{target}] Connection closed (attempt {reconnect_attempt}): {e}")
+            safe_error = redact_text(str(e), secret_values)
+            logger.warning(f"[{target}] Connection closed (attempt {reconnect_attempt}): {safe_error}")
             # Calculate wait time for next reconnection (exponential backoff)
             backoff = min(backoff * 2, MAX_BACKOFF)
 
@@ -72,6 +81,7 @@ async def connect_to_server(uri, target):
 
             # Start server process (built from CLI arg or config)
             cmd, env = build_server_command(target)
+            ensure_executable_available(cmd[0], env)
             process = subprocess.Popen(
                 cmd,
                 stdin=subprocess.PIPE,
@@ -81,13 +91,15 @@ async def connect_to_server(uri, target):
                 text=True,
                 env=env
             )
-            logger.info(f"[{target}] Started server process: {' '.join(cmd)}")
+            secret_values = collect_sensitive_values(env)
+            safe_command = redact_text(" ".join(redact_argv(cmd)), secret_values)
+            logger.info(f"[{target}] Started server process: {safe_command}")
             
             # Create two tasks: read from WebSocket and write to process, read from process and write to WebSocket
             await asyncio.gather(
                 pipe_websocket_to_process(websocket, process, target),
                 pipe_process_to_websocket(process, websocket, target),
-                pipe_process_stderr_to_terminal(process, target)
+                pipe_process_stderr_to_terminal(process, target, secret_values)
             )
     except websockets.exceptions.ConnectionClosed as e:
         logger.error(f"[{target}] WebSocket connection closed: {e}")
@@ -146,7 +158,7 @@ async def pipe_process_to_websocket(process, websocket, target):
         logger.error(f"[{target}] Error in process to WebSocket pipe: {e}")
         raise  # Re-throw exception to trigger reconnection
 
-async def pipe_process_stderr_to_terminal(process, target):
+async def pipe_process_stderr_to_terminal(process, target, secret_values):
     """Read data from process stderr and print to terminal"""
     try:
         while True:
@@ -157,8 +169,8 @@ async def pipe_process_stderr_to_terminal(process, target):
                 logger.info(f"[{target}] Process has ended stderr output")
                 break
                 
-            # Print stderr data to terminal (in text mode, data is already a string)
-            sys.stderr.write(data)
+            # Print stderr data to terminal, redacting known secret values first.
+            sys.stderr.write(redact_text(data, secret_values))
             sys.stderr.flush()
     except Exception as e:
         logger.error(f"[{target}] Error in process stderr pipe: {e}")
@@ -169,17 +181,10 @@ def signal_handler(sig, frame):
     logger.info("Received interrupt signal, shutting down...")
     sys.exit(0)
 
+
 def load_config():
-    """Load JSON config from $MCP_CONFIG or ./mcp_config.json. Return dict or {}."""
-    path = os.environ.get("MCP_CONFIG") or os.path.join(os.getcwd(), "mcp_config.json")
-    if not os.path.exists(path):
-        return {}
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as e:
-        logger.warning(f"Failed to load config {path}: {e}")
-        return {}
+    """Load typed bridge config from $MCP_CONFIG, $MCP_CONFIG_PATH, or ./mcp_config.json."""
+    return load_bridge_config_from_env(cwd=ROOT_DIR)
 
 
 def build_server_command(target=None):
@@ -193,51 +198,13 @@ def build_server_command(target=None):
     if target is None:
         assert len(sys.argv) >= 2, "missing server name or script path"
         target = sys.argv[1]
-    cfg = load_config()
-    servers = cfg.get("mcpServers", {}) if isinstance(cfg, dict) else {}
-
-    if target in servers:
-        entry = servers[target] or {}
-        if entry.get("disabled"):
-            raise RuntimeError(f"Server '{target}' is disabled in config")
-        typ = (entry.get("type") or entry.get("transportType") or "stdio").lower()
-
-        # environment for child process
-        child_env = os.environ.copy()
-        for k, v in (entry.get("env") or {}).items():
-            child_env[str(k)] = str(v)
-
-        if typ == "stdio":
-            command = entry.get("command")
-            args = entry.get("args") or []
-            if not command:
-                raise RuntimeError(f"Server '{target}' is missing 'command'")
-            return [command, *args], child_env
-
-        if typ in ("sse", "http", "streamablehttp"):
-            url = entry.get("url")
-            if not url:
-                raise RuntimeError(f"Server '{target}' (type {typ}) is missing 'url'")
-            # Unified approach: always use current Python to run mcp-proxy module
-            cmd = [sys.executable, "-m", "mcp_proxy"]
-            if typ in ("http", "streamablehttp"):
-                cmd += ["--transport", "streamablehttp"]
-            # optional headers: {"Authorization": "Bearer xxx"}
-            headers = entry.get("headers") or {}
-            for hk, hv in headers.items():
-                cmd += ["-H", hk, str(hv)]
-            cmd.append(url)
-            return cmd, child_env
-
-        raise RuntimeError(f"Unsupported server type: {typ}")
-
-    # Fallback to script path (back-compat)
-    script_path = target
-    if not os.path.exists(script_path):
-        raise RuntimeError(
-            f"'{target}' is neither a configured server nor an existing script"
-        )
-    return [sys.executable, script_path], os.environ.copy()
+    command = build_configured_server_command(
+        target,
+        config=load_config(),
+        base_env=build_child_base_env(os.environ, python_executable=sys.executable),
+        python_executable=sys.executable,
+    )
+    return command.argv, command.env
 
 if __name__ == "__main__":
     # Register signal handler
@@ -255,9 +222,8 @@ if __name__ == "__main__":
     async def _main():
         if not target_arg:
             cfg = load_config()
-            servers_cfg = (cfg.get("mcpServers") or {})
-            all_servers = list(servers_cfg.keys())
-            enabled = [name for name, entry in servers_cfg.items() if not (entry or {}).get("disabled")]
+            all_servers = list(cfg.servers.keys())
+            enabled = [server.name for server in cfg.enabled_servers(os.environ)]
             skipped = [name for name in all_servers if name not in enabled]
             if skipped:
                 logger.info(f"Skipping disabled servers: {', '.join(skipped)}")
@@ -268,11 +234,7 @@ if __name__ == "__main__":
             # Run all forever; if any crashes it will auto-retry inside
             await asyncio.gather(*tasks)
         else:
-            if os.path.exists(target_arg):
-                await connect_with_retry(endpoint_url, target_arg)
-            else:
-                logger.error("Argument must be a local Python script path. To run configured servers, run without arguments.")
-                sys.exit(1)
+            await connect_with_retry(endpoint_url, target_arg)
 
     try:
         asyncio.run(_main())
