@@ -345,6 +345,12 @@ After `VOLCENGINE_SEARCH_API_KEY` is configured, verify that the official search
 /opt/xiaozhi-mcp/.venv/bin/python /opt/xiaozhi-mcp/scripts/smoke_volcengine_search.py
 ```
 
+Then run one quota-consuming real search query if an end-to-end API validation is required:
+
+```bash
+/opt/xiaozhi-mcp/.venv/bin/python /opt/xiaozhi-mcp/scripts/query_volcengine_search.py "今日火山引擎 Agent Plan 联网搜索"
+```
+
 ### Phase 5: Future Providers
 
 Purpose: add more search sources without changing the bridge core.

@@ -76,6 +76,14 @@ After `VOLCENGINE_SEARCH_API_KEY` is configured, run the MCP smoke check:
 
 This starts the official Volcengine MCP server and lists its tools. It does not perform a search request.
 
+To run one real search query after the key is configured:
+
+```bash
+.venv/bin/python scripts/query_volcengine_search.py "今日火山引擎 Agent Plan 联网搜索"
+```
+
+This consumes Volcengine web-search quota.
+
 ## Configuration
 
 The bridge loads config from:
