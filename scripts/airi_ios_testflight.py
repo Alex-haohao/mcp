@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import os
 import plistlib
+import re
 import shutil
 import shlex
 import subprocess
@@ -26,6 +27,45 @@ CAPACITOR_SYNC_TRACKED_FILES = [
         "xcshareddata/swiftpm/Package.resolved"
     ),
 ]
+ENV_KEY_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def parse_dotenv_line(line: str) -> tuple[str, str] | None:
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        return None
+    if stripped.startswith("export "):
+        stripped = stripped[len("export ") :].lstrip()
+
+    key, separator, value = stripped.partition("=")
+    if not separator:
+        return None
+
+    key = key.strip()
+    if not ENV_KEY_PATTERN.match(key):
+        return None
+
+    value = value.strip()
+    if value.startswith(("'", '"')):
+        try:
+            parsed = shlex.split(value, comments=False, posix=True)
+        except ValueError:
+            parsed = [value.strip(value[0])]
+        value = parsed[0] if parsed else ""
+    else:
+        value = value.split(" #", 1)[0].strip()
+    return key, value
+
+
+def load_dotenv(path: Path) -> None:
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        parsed = parse_dotenv_line(line)
+        if parsed is None:
+            continue
+        key, value = parsed
+        os.environ.setdefault(key, value)
 
 
 def first_env(*names: str) -> str | None:
@@ -42,6 +82,7 @@ def run(command: list[str], *, cwd: Path) -> None:
 
 
 def parse_args() -> argparse.Namespace:
+    load_dotenv(ROOT_DIR / ".env")
     parser = argparse.ArgumentParser(
         description="Build AIRI Stage Pocket for iOS/TestFlight from the AIRI submodule."
     )

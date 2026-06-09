@@ -194,10 +194,8 @@ Build AIRI Stage Pocket for iOS/TestFlight:
 
 ```bash
 python scripts/airi_ios_testflight.py \
-  --team-id <APPLE_TEAM_ID> \
-  --bundle-id <IOS_BUNDLE_ID> \
   --export-ipa \
   --upload-testflight
 ```
 
-The current local build has verified the AIRI iOS simulator build and an unsigned device archive. A TestFlight upload still requires Xcode to have access to your Apple Developer account and App Store signing assets.
+The script reads local AIRI/App Store Connect settings from `.env` and keeps secrets out of Git. The current local build has verified the AIRI iOS simulator build and an unsigned device archive. A TestFlight upload still requires Xcode to have access to your Apple Developer account and App Store signing assets.

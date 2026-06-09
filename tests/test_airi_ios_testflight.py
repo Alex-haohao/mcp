@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import tempfile
 import sys
 import unittest
@@ -46,6 +47,54 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
         )
 
         self.assertIn("CODE_SIGN_IDENTITY=", settings)
+
+    def test_parse_dotenv_line_supports_quotes_and_comments(self):
+        self.assertEqual(
+            self.script.parse_dotenv_line("AIRI_IOS_TEAM_ID=KA4786U458"),
+            ("AIRI_IOS_TEAM_ID", "KA4786U458"),
+        )
+        self.assertEqual(
+            self.script.parse_dotenv_line('AIRI_ASC_API_KEY_PATH="~/keys/AuthKey_ABC.p8"'),
+            ("AIRI_ASC_API_KEY_PATH", "~/keys/AuthKey_ABC.p8"),
+        )
+        self.assertEqual(
+            self.script.parse_dotenv_line("export AIRI_IOS_BUNDLE_ID=com.example.airi # local"),
+            ("AIRI_IOS_BUNDLE_ID", "com.example.airi"),
+        )
+        self.assertIsNone(self.script.parse_dotenv_line("# comment"))
+
+    def test_load_dotenv_does_not_override_existing_environment(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            env_path = Path(tmp_dir) / ".env"
+            env_path.write_text(
+                "\n".join(
+                    [
+                        "AIRI_IOS_TEAM_ID=FROM_FILE",
+                        "AIRI_IOS_BUNDLE_ID=com.example.airi",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            original_team = os.environ.get("AIRI_IOS_TEAM_ID")
+            original_bundle = os.environ.get("AIRI_IOS_BUNDLE_ID")
+            try:
+                os.environ["AIRI_IOS_TEAM_ID"] = "FROM_ENV"
+                os.environ.pop("AIRI_IOS_BUNDLE_ID", None)
+
+                self.script.load_dotenv(env_path)
+
+                self.assertEqual(os.environ["AIRI_IOS_TEAM_ID"], "FROM_ENV")
+                self.assertEqual(os.environ["AIRI_IOS_BUNDLE_ID"], "com.example.airi")
+            finally:
+                if original_team is None:
+                    os.environ.pop("AIRI_IOS_TEAM_ID", None)
+                else:
+                    os.environ["AIRI_IOS_TEAM_ID"] = original_team
+                if original_bundle is None:
+                    os.environ.pop("AIRI_IOS_BUNDLE_ID", None)
+                else:
+                    os.environ["AIRI_IOS_BUNDLE_ID"] = original_bundle
 
     def test_manual_signed_archive_settings_require_profile(self):
         with self.assertRaisesRegex(RuntimeError, "provisioning-profile"):

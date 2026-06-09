@@ -62,6 +62,25 @@ com.tianhaoxi.airi.pocket
 
 You can choose a different Bundle ID, but use the same value consistently in local builds and App Store Connect.
 
+## Local Configuration
+
+The build script automatically reads this repository's local `.env` file before parsing command-line options. Existing shell environment variables still win over `.env` values.
+
+Useful local keys:
+
+```dotenv
+AIRI_IOS_TEAM_ID=KA4786U458
+AIRI_IOS_BUNDLE_ID=com.tianhaoxi.airi.pocket
+AIRI_IOS_SIGNING_STYLE=automatic
+AIRI_IOS_PROVISIONING_PROFILE=
+AIRI_IOS_CODE_SIGN_IDENTITY=
+AIRI_ASC_API_KEY_PATH=/Users/<you>/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8
+AIRI_ASC_API_KEY_ID=<KEY_ID>
+AIRI_ASC_ISSUER_ID=<ISSUER_ID>
+```
+
+Keep the `.p8` file outside the repository. The `.env` file is ignored by Git and should remain local.
+
 ## Build Script
 
 The workspace script wraps the verified commands:
@@ -103,8 +122,6 @@ export AIRI_ASC_API_KEY_ID="<KEY_ID>"
 export AIRI_ASC_ISSUER_ID="<ISSUER_ID>"
 
 python scripts/airi_ios_testflight.py \
-  --team-id KA4786U458 \
-  --bundle-id com.tianhaoxi.airi.pocket \
   --export-ipa \
   --upload-testflight
 ```
