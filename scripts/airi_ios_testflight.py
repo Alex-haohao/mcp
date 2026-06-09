@@ -81,6 +81,17 @@ def run(command: list[str], *, cwd: Path) -> None:
     subprocess.run(command, cwd=cwd, check=True)
 
 
+def run_capture(command: list[str], *, cwd: Path) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        command,
+        cwd=cwd,
+        check=False,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+
 def parse_args() -> argparse.Namespace:
     load_dotenv(ROOT_DIR / ".env")
     parser = argparse.ArgumentParser(
@@ -184,6 +195,11 @@ def parse_args() -> argparse.Namespace:
         "--internal-testing-only",
         action="store_true",
         help="Mark exported build as TestFlight internal testing only.",
+    )
+    parser.add_argument(
+        "--diagnose-signing",
+        action="store_true",
+        help="Check local TestFlight signing/upload prerequisites without building.",
     )
     return parser.parse_args()
 
@@ -481,9 +497,110 @@ def upload_testflight(
     run(command, cwd=ROOT_DIR)
 
 
+def collect_code_signing_identity_names(output: str) -> list[str]:
+    names: list[str] = []
+    for line in output.splitlines():
+        matches = re.findall(r'"([^"]+)"', line)
+        if matches:
+            names.append(matches[-1])
+    return names
+
+
+def code_signing_identity_names() -> list[str]:
+    result = run_capture(["security", "find-identity", "-v", "-p", "codesigning"], cwd=ROOT_DIR)
+    if result.returncode != 0:
+        return []
+    return collect_code_signing_identity_names(result.stdout)
+
+
+def has_identity(identity_names: list[str], *needles: str) -> bool:
+    return any(any(needle in identity for needle in needles) for identity in identity_names)
+
+
+def path_status(path_value: str | None) -> tuple[bool, str]:
+    if not path_value:
+        return False, "missing"
+    path = Path(path_value).expanduser()
+    if not path.exists():
+        return False, f"not found: {path}"
+    return True, f"found: {path}"
+
+
+def build_signing_diagnostics(
+    *,
+    team_id: str | None,
+    bundle_id: str | None,
+    signing_style: str,
+    provisioning_profile: str | None,
+    key_path: str | None,
+    key_id: str | None,
+    issuer_id: str | None,
+    identity_names: list[str],
+) -> list[tuple[str, bool, str]]:
+    key_path_ok, key_path_detail = path_status(key_path)
+    has_development_identity = has_identity(
+        identity_names,
+        "Apple Development",
+        "iPhone Developer",
+    )
+    has_distribution_identity = has_identity(
+        identity_names,
+        "Apple Distribution",
+        "iOS Distribution",
+    )
+    return [
+        (
+            "AIRI checkout",
+            AIRI_DIR.exists() and IOS_PROJECT.exists(),
+            str(AIRI_DIR),
+        ),
+        ("Team ID", bool(team_id), "configured" if team_id else "missing"),
+        ("Bundle ID", bool(bundle_id), "configured" if bundle_id else "missing"),
+        (
+            "Apple Development identity",
+            has_development_identity,
+            "present" if has_development_identity else "missing",
+        ),
+        (
+            "Apple Distribution identity",
+            has_distribution_identity,
+            "present" if has_distribution_identity else "missing",
+        ),
+        ("ASC API key path", key_path_ok, key_path_detail),
+        ("ASC API key ID", bool(key_id), "configured" if key_id else "missing"),
+        ("ASC issuer ID", bool(issuer_id), "configured" if issuer_id else "missing"),
+        (
+            "Manual provisioning profile",
+            signing_style != "manual" or bool(provisioning_profile),
+            "not required"
+            if signing_style != "manual"
+            else ("configured" if provisioning_profile else "missing"),
+        ),
+    ]
+
+
+def diagnose_signing(args: argparse.Namespace) -> int:
+    diagnostics = build_signing_diagnostics(
+        team_id=args.team_id,
+        bundle_id=args.bundle_id,
+        signing_style=args.signing_style,
+        provisioning_profile=args.provisioning_profile,
+        key_path=args.authentication_key_path,
+        key_id=args.authentication_key_id,
+        issuer_id=args.authentication_key_issuer_id,
+        identity_names=code_signing_identity_names(),
+    )
+    for label, ok, detail in diagnostics:
+        marker = "ok" if ok else "missing"
+        print(f"[{marker}] {label}: {detail}")
+    return 0 if all(ok for _, ok, _ in diagnostics) else 1
+
+
 def main() -> int:
     args = parse_args()
     try:
+        if args.diagnose_signing:
+            return diagnose_signing(args)
         ensure_airi_checkout()
         if not args.team_id:
             raise RuntimeError("--team-id or AIRI_IOS_TEAM_ID is required")

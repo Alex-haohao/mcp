@@ -196,6 +196,61 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
                 issuer_id=None,
             )
 
+    def test_collect_code_signing_identity_names(self):
+        output = """
+  1) ABCDEF "Apple Development: Example (TEAM123456)"
+  2) 123456 "Apple Distribution: Example, Inc. (TEAM123456)"
+     2 valid identities found
+"""
+
+        self.assertEqual(
+            self.script.collect_code_signing_identity_names(output),
+            [
+                "Apple Development: Example (TEAM123456)",
+                "Apple Distribution: Example, Inc. (TEAM123456)",
+            ],
+        )
+
+    def test_build_signing_diagnostics_reports_missing_upload_assets(self):
+        diagnostics = self.script.build_signing_diagnostics(
+            team_id=None,
+            bundle_id=None,
+            signing_style="automatic",
+            provisioning_profile=None,
+            key_path=None,
+            key_id=None,
+            issuer_id=None,
+            identity_names=["Apple Development: Example (TEAM123456)"],
+        )
+        by_label = {label: ok for label, ok, _ in diagnostics}
+
+        self.assertFalse(by_label["Team ID"])
+        self.assertFalse(by_label["Bundle ID"])
+        self.assertTrue(by_label["Apple Development identity"])
+        self.assertFalse(by_label["Apple Distribution identity"])
+        self.assertFalse(by_label["ASC API key path"])
+
+    def test_build_signing_diagnostics_accepts_complete_cli_upload_assets(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            key_path = Path(tmp_dir) / "AuthKey_ABC123.p8"
+            key_path.write_text("private-key-placeholder", encoding="utf-8")
+
+            diagnostics = self.script.build_signing_diagnostics(
+                team_id="TEAM123456",
+                bundle_id="com.example.airi",
+                signing_style="automatic",
+                provisioning_profile=None,
+                key_path=str(key_path),
+                key_id="ABC123",
+                issuer_id="issuer-uuid",
+                identity_names=[
+                    "Apple Development: Example (TEAM123456)",
+                    "Apple Distribution: Example, Inc. (TEAM123456)",
+                ],
+            )
+
+        self.assertTrue(all(ok for _, ok, _ in diagnostics))
+
 
 if __name__ == "__main__":
     unittest.main()

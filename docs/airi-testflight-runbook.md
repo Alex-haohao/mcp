@@ -81,6 +81,25 @@ AIRI_ASC_ISSUER_ID=<ISSUER_ID>
 
 Keep the `.p8` file outside the repository. The `.env` file is ignored by Git and should remain local.
 
+## Signing Diagnostics
+
+Before attempting a signed archive or upload, run:
+
+```bash
+python scripts/airi_ios_testflight.py --diagnose-signing
+```
+
+The diagnostic checks:
+
+1. AIRI submodule checkout
+2. Team ID and Bundle ID
+3. local Apple Development identity
+4. local Apple Distribution identity
+5. App Store Connect API key path, key ID, and issuer ID
+6. manual provisioning profile when `AIRI_IOS_SIGNING_STYLE=manual`
+
+It does not print secret values and does not contact Apple. For CLI TestFlight upload, every item should be `ok`. If `Apple Distribution identity` is missing, open Xcode and refresh the Apple Developer account, or create/download the distribution certificate and private key for the selected team. If the ASC API key items are missing, create an App Store Connect API key and put the `.p8` file outside this repository.
+
 ## Build Script
 
 The workspace script wraps the verified commands:

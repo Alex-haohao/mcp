@@ -193,6 +193,8 @@ git submodule update --init --recursive
 Build AIRI Stage Pocket for iOS/TestFlight:
 
 ```bash
+python scripts/airi_ios_testflight.py --diagnose-signing
+
 python scripts/airi_ios_testflight.py \
   --export-ipa \
   --upload-testflight
