@@ -80,6 +80,49 @@ The script runs:
 4. iOS simulator compile smoke test
 5. iOS Release archive for generic device
 
+By default this creates a signed archive only. Add `--export-ipa` after signing is healthy to produce an App Store Connect IPA:
+
+```bash
+python scripts/airi_ios_testflight.py \
+  --team-id KA4786U458 \
+  --bundle-id com.tianhaoxi.airi.pocket \
+  --export-ipa
+```
+
+The exported IPA will be under:
+
+```text
+build/airi-testflight/export/
+```
+
+To upload with the CLI, create an App Store Connect API key in App Store Connect and provide these values through environment variables or command-line flags:
+
+```bash
+export AIRI_ASC_API_KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8"
+export AIRI_ASC_API_KEY_ID="<KEY_ID>"
+export AIRI_ASC_ISSUER_ID="<ISSUER_ID>"
+
+python scripts/airi_ios_testflight.py \
+  --team-id KA4786U458 \
+  --bundle-id com.tianhaoxi.airi.pocket \
+  --export-ipa \
+  --upload-testflight
+```
+
+The script never writes App Store Connect secrets into the repository.
+
+If automatic signing remains unreliable, use manual App Store signing:
+
+```bash
+python scripts/airi_ios_testflight.py \
+  --team-id KA4786U458 \
+  --bundle-id com.tianhaoxi.airi.pocket \
+  --signing-style manual \
+  --provisioning-profile "<APP_STORE_PROFILE_NAME_OR_UUID>" \
+  --export-ipa \
+  --upload-testflight
+```
+
 Capacitor sync updates a small set of tracked Xcode SPM files inside the AIRI submodule so Xcode can resolve local Capacitor plugins from `node_modules`. The script restores those files by default after the build so the AIRI submodule stays clean. Use `--keep-synced-xcode-files` only when you want to leave the Xcode project prepared for manual inspection or manual archiving in Xcode.
 
 Avoid `--skip-sync` unless the Xcode project is already prepared from a prior sync. Skipping sync against a restored checkout can make Xcode fail to resolve local Capacitor plugin packages.
@@ -101,5 +144,3 @@ The most reliable first upload path is Xcode Organizer:
 5. In Organizer, choose `Distribute App`.
 6. Select `App Store Connect`.
 7. Upload to TestFlight.
-
-CLI upload can be added later with App Store Connect API key credentials, but those credentials should not be stored in this repository.

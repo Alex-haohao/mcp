@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import plistlib
 import shutil
 import shlex
 import subprocess
@@ -15,6 +16,9 @@ STAGE_POCKET_DIR = AIRI_DIR / "apps" / "stage-pocket"
 IOS_PROJECT = STAGE_POCKET_DIR / "ios" / "App" / "App.xcodeproj"
 BUILD_DIR = ROOT_DIR / "build" / "airi-testflight"
 DERIVED_DATA_DIR = ROOT_DIR / "build" / "airi-derived-data"
+ARCHIVE_PATH = BUILD_DIR / "AIRI.xcarchive"
+EXPORT_DIR = BUILD_DIR / "export"
+EXPORT_OPTIONS_PATH = BUILD_DIR / "ExportOptions.plist"
 CAPACITOR_SYNC_TRACKED_FILES = [
     Path("apps/stage-pocket/ios/App/CapApp-SPM/Package.swift"),
     Path(
@@ -22,6 +26,14 @@ CAPACITOR_SYNC_TRACKED_FILES = [
         "xcshareddata/swiftpm/Package.resolved"
     ),
 ]
+
+
+def first_env(*names: str) -> str | None:
+    for name in names:
+        value = os.getenv(name)
+        if value:
+            return value
+    return None
 
 
 def run(command: list[str], *, cwd: Path) -> None:
@@ -42,6 +54,37 @@ def parse_args() -> argparse.Namespace:
         "--bundle-id",
         default=os.getenv("AIRI_IOS_BUNDLE_ID"),
         help="iOS Bundle ID. Can also be set with AIRI_IOS_BUNDLE_ID.",
+    )
+    parser.add_argument(
+        "--signing-style",
+        choices=("automatic", "manual"),
+        default=os.getenv("AIRI_IOS_SIGNING_STYLE", "automatic"),
+        help="Xcode signing style for a signed archive. Defaults to automatic.",
+    )
+    parser.add_argument(
+        "--provisioning-profile",
+        default=os.getenv("AIRI_IOS_PROVISIONING_PROFILE"),
+        help="Provisioning profile name or UUID. Required for manual signed archives.",
+    )
+    parser.add_argument(
+        "--code-sign-identity",
+        default=os.getenv("AIRI_IOS_CODE_SIGN_IDENTITY"),
+        help="Code signing identity override. Manual signing defaults to Apple Distribution.",
+    )
+    parser.add_argument(
+        "--authentication-key-path",
+        default=first_env("AIRI_ASC_API_KEY_PATH", "APP_STORE_CONNECT_API_KEY_PATH"),
+        help="App Store Connect API .p8 key path for xcodebuild/altool.",
+    )
+    parser.add_argument(
+        "--authentication-key-id",
+        default=first_env("AIRI_ASC_API_KEY_ID", "APP_STORE_CONNECT_API_KEY_ID"),
+        help="App Store Connect API key ID.",
+    )
+    parser.add_argument(
+        "--authentication-key-issuer-id",
+        default=first_env("AIRI_ASC_ISSUER_ID", "APP_STORE_CONNECT_ISSUER_ID"),
+        help="App Store Connect API issuer ID.",
     )
     parser.add_argument(
         "--skip-install",
@@ -75,6 +118,31 @@ def parse_args() -> argparse.Namespace:
         "--unsigned-archive",
         action="store_true",
         help="Create an unsigned device archive. This cannot be uploaded to TestFlight.",
+    )
+    parser.add_argument(
+        "--skip-archive",
+        action="store_true",
+        help="Skip archive creation and use the existing archive path.",
+    )
+    parser.add_argument(
+        "--export-ipa",
+        action="store_true",
+        help="Export the signed archive to an App Store Connect IPA.",
+    )
+    parser.add_argument(
+        "--upload-testflight",
+        action="store_true",
+        help="Upload the exported IPA to App Store Connect/TestFlight with altool.",
+    )
+    parser.add_argument(
+        "--wait-for-processing",
+        action="store_true",
+        help="Ask altool to wait for upload or processing completion when supported.",
+    )
+    parser.add_argument(
+        "--internal-testing-only",
+        action="store_true",
+        help="Mark exported build as TestFlight internal testing only.",
     )
     return parser.parse_args()
 
@@ -149,23 +217,84 @@ def build_simulator() -> None:
     )
 
 
-def build_signing_settings(*, team_id: str, bundle_id: str, unsigned: bool) -> list[str]:
+def build_authentication_args(
+    *,
+    key_path: str | None,
+    key_id: str | None,
+    issuer_id: str | None,
+) -> list[str]:
+    provided = [bool(key_path), bool(key_id), bool(issuer_id)]
+    if any(provided) and not all(provided):
+        raise RuntimeError(
+            "App Store Connect authentication requires key path, key ID, and issuer ID"
+        )
+    if not all(provided):
+        return []
+    return [
+        "-authenticationKeyPath",
+        str(Path(key_path).expanduser()),
+        "-authenticationKeyID",
+        str(key_id),
+        "-authenticationKeyIssuerID",
+        str(issuer_id),
+    ]
+
+
+def require_app_store_connect_authentication(
+    *,
+    key_path: str | None,
+    key_id: str | None,
+    issuer_id: str | None,
+) -> None:
+    if not all([key_path, key_id, issuer_id]):
+        raise RuntimeError(
+            "TestFlight upload requires App Store Connect key path, key ID, and issuer ID"
+        )
+    build_authentication_args(key_path=key_path, key_id=key_id, issuer_id=issuer_id)
+
+
+def build_signing_settings(
+    *,
+    team_id: str,
+    bundle_id: str,
+    unsigned: bool,
+    signing_style: str = "automatic",
+    provisioning_profile: str | None = None,
+    code_sign_identity: str | None = None,
+) -> list[str]:
+    if signing_style not in {"automatic", "manual"}:
+        raise RuntimeError("signing style must be automatic or manual")
+    if signing_style == "manual" and not unsigned and not provisioning_profile:
+        raise RuntimeError("--provisioning-profile is required for manual signed archives")
+
     settings = [
         f"DEVELOPMENT_TEAM={team_id}",
         f"PRODUCT_BUNDLE_IDENTIFIER={bundle_id}",
-        "CODE_SIGN_STYLE=Automatic",
-        "PROVISIONING_PROFILE_SPECIFIER=",
+        f"CODE_SIGN_STYLE={signing_style.title()}",
+        f"PROVISIONING_PROFILE_SPECIFIER={provisioning_profile or ''}",
     ]
     if unsigned:
         settings.append("CODE_SIGN_IDENTITY=")
+    elif signing_style == "manual":
+        settings.append(f"CODE_SIGN_IDENTITY={code_sign_identity or 'Apple Distribution'}")
+    elif code_sign_identity:
+        settings.append(f"CODE_SIGN_IDENTITY={code_sign_identity}")
     return settings
 
 
-def archive_ios(*, team_id: str, bundle_id: str, unsigned: bool) -> None:
+def archive_ios(
+    *,
+    team_id: str,
+    bundle_id: str,
+    unsigned: bool,
+    signing_style: str,
+    provisioning_profile: str | None,
+    code_sign_identity: str | None,
+    authentication_args: list[str],
+) -> None:
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
-    archive_path = BUILD_DIR / "AIRI.xcarchive"
-    if archive_path.exists():
-        shutil.rmtree(archive_path)
+    if ARCHIVE_PATH.exists():
+        shutil.rmtree(ARCHIVE_PATH)
 
     run(
         [
@@ -179,19 +308,136 @@ def archive_ios(*, team_id: str, bundle_id: str, unsigned: bool) -> None:
             "-destination",
             "generic/platform=iOS",
             "-archivePath",
-            str(archive_path),
+            str(ARCHIVE_PATH),
             "-derivedDataPath",
             str(DERIVED_DATA_DIR),
             "-allowProvisioningUpdates",
+            *authentication_args,
             *build_signing_settings(
                 team_id=team_id,
                 bundle_id=bundle_id,
                 unsigned=unsigned,
+                signing_style=signing_style,
+                provisioning_profile=provisioning_profile,
+                code_sign_identity=code_sign_identity,
             ),
             "archive",
         ],
         cwd=AIRI_DIR,
     )
+
+
+def build_export_options(
+    *,
+    team_id: str,
+    bundle_id: str,
+    signing_style: str,
+    provisioning_profile: str | None,
+    destination: str = "export",
+    internal_testing_only: bool = False,
+) -> dict[str, object]:
+    if signing_style not in {"automatic", "manual"}:
+        raise RuntimeError("signing style must be automatic or manual")
+    if signing_style == "manual" and not provisioning_profile:
+        raise RuntimeError("--provisioning-profile is required for manual IPA export")
+
+    options: dict[str, object] = {
+        "method": "app-store-connect",
+        "destination": destination,
+        "teamID": team_id,
+        "signingStyle": signing_style,
+        "stripSwiftSymbols": True,
+        "uploadSymbols": True,
+        "manageAppVersionAndBuildNumber": True,
+    }
+    if internal_testing_only:
+        options["testFlightInternalTestingOnly"] = True
+    if signing_style == "manual":
+        options["provisioningProfiles"] = {bundle_id: provisioning_profile}
+    return options
+
+
+def write_export_options(options: dict[str, object]) -> None:
+    BUILD_DIR.mkdir(parents=True, exist_ok=True)
+    with EXPORT_OPTIONS_PATH.open("wb") as plist_file:
+        plistlib.dump(options, plist_file)
+
+
+def export_ipa(
+    *,
+    team_id: str,
+    bundle_id: str,
+    signing_style: str,
+    provisioning_profile: str | None,
+    authentication_args: list[str],
+    internal_testing_only: bool,
+) -> None:
+    if not ARCHIVE_PATH.exists():
+        raise RuntimeError(f"archive does not exist: {ARCHIVE_PATH}")
+    if EXPORT_DIR.exists():
+        shutil.rmtree(EXPORT_DIR)
+    write_export_options(
+        build_export_options(
+            team_id=team_id,
+            bundle_id=bundle_id,
+            signing_style=signing_style,
+            provisioning_profile=provisioning_profile,
+            internal_testing_only=internal_testing_only,
+        )
+    )
+    run(
+        [
+            "xcodebuild",
+            "-exportArchive",
+            "-archivePath",
+            str(ARCHIVE_PATH),
+            "-exportPath",
+            str(EXPORT_DIR),
+            "-exportOptionsPlist",
+            str(EXPORT_OPTIONS_PATH),
+            "-allowProvisioningUpdates",
+            *authentication_args,
+        ],
+        cwd=ROOT_DIR,
+    )
+
+
+def find_exported_ipa() -> Path:
+    ipa_paths = sorted(EXPORT_DIR.glob("*.ipa"))
+    if len(ipa_paths) != 1:
+        raise RuntimeError(f"expected exactly one IPA in {EXPORT_DIR}, found {len(ipa_paths)}")
+    return ipa_paths[0]
+
+
+def upload_testflight(
+    *,
+    ipa_path: Path,
+    key_path: str | None,
+    key_id: str | None,
+    issuer_id: str | None,
+    wait: bool,
+) -> None:
+    require_app_store_connect_authentication(
+        key_path=key_path,
+        key_id=key_id,
+        issuer_id=issuer_id,
+    )
+    command = [
+        "xcrun",
+        "altool",
+        "--upload-package",
+        str(ipa_path),
+        "--api-key",
+        str(key_id),
+        "--api-issuer",
+        str(issuer_id),
+        "--p8-file-path",
+        str(Path(str(key_path)).expanduser()),
+        "--show-progress",
+    ]
+    if wait:
+        command.append("--wait")
+    run(command, cwd=ROOT_DIR)
 
 
 def main() -> int:
@@ -202,6 +448,21 @@ def main() -> int:
             raise RuntimeError("--team-id or AIRI_IOS_TEAM_ID is required")
         if not args.bundle_id:
             raise RuntimeError("--bundle-id or AIRI_IOS_BUNDLE_ID is required")
+        if args.unsigned_archive and (args.export_ipa or args.upload_testflight):
+            raise RuntimeError("unsigned archives cannot be exported or uploaded to TestFlight")
+        if args.upload_testflight:
+            args.export_ipa = True
+            require_app_store_connect_authentication(
+                key_path=args.authentication_key_path,
+                key_id=args.authentication_key_id,
+                issuer_id=args.authentication_key_issuer_id,
+            )
+
+        authentication_args = build_authentication_args(
+            key_path=args.authentication_key_path,
+            key_id=args.authentication_key_id,
+            issuer_id=args.authentication_key_issuer_id,
+        )
 
         if not args.skip_install:
             pnpm_install()
@@ -218,14 +479,36 @@ def main() -> int:
                 sync_ios()
             if not args.skip_simulator_build:
                 build_simulator()
-            archive_ios(
-                team_id=args.team_id,
-                bundle_id=args.bundle_id,
-                unsigned=args.unsigned_archive,
-            )
+            if not args.skip_archive:
+                archive_ios(
+                    team_id=args.team_id,
+                    bundle_id=args.bundle_id,
+                    unsigned=args.unsigned_archive,
+                    signing_style=args.signing_style,
+                    provisioning_profile=args.provisioning_profile,
+                    code_sign_identity=args.code_sign_identity,
+                    authentication_args=authentication_args,
+                )
         finally:
             if should_restore_sync_files:
                 restore_tracked_files(CAPACITOR_SYNC_TRACKED_FILES)
+        if args.export_ipa:
+            export_ipa(
+                team_id=args.team_id,
+                bundle_id=args.bundle_id,
+                signing_style=args.signing_style,
+                provisioning_profile=args.provisioning_profile,
+                authentication_args=authentication_args,
+                internal_testing_only=args.internal_testing_only,
+            )
+        if args.upload_testflight:
+            upload_testflight(
+                ipa_path=find_exported_ipa(),
+                key_path=args.authentication_key_path,
+                key_id=args.authentication_key_id,
+                issuer_id=args.authentication_key_issuer_id,
+                wait=args.wait_for_processing,
+            )
     except subprocess.CalledProcessError as exc:
         return exc.returncode
     except Exception as exc:

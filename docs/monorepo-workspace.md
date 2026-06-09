@@ -23,6 +23,15 @@ The current MCP service intentionally remains at the repository root to avoid br
 
 Using submodules keeps large upstream projects independent while still allowing this root repository to pin known-good revisions.
 
+## Design Rules
+
+- Keep independent AI projects under `projects/<name>` unless the code is owned by this root repository.
+- Do not share dependency folders across unrelated projects. Each project keeps its own package manager, lockfile, build output, and release process.
+- Root-level scripts should orchestrate repeatable workflows, not patch upstream project source files by default.
+- If a generated file is needed only for a local build, keep it ignored or restore it after the build.
+- Pin external projects through submodule commits so a working release can be reproduced later.
+- Document every project-specific build or deployment path under `docs/` before relying on it operationally.
+
 ## Common Commands
 
 Clone with submodules:
@@ -65,3 +74,23 @@ git submodule add <repo-url> projects/<name>
 Then add an entry to `workspace/projects.json` and document any project-specific build/deploy flow under `docs/`.
 
 Use plain directories only for code owned by this workspace.
+
+## Updating A Project Safely
+
+Before updating a submodule:
+
+1. Check the root repository is clean.
+2. Update the submodule with a fast-forward pull.
+3. Run that project's build or smoke test.
+4. Commit only the submodule pointer and any required workspace docs or scripts.
+
+For AIRI, the minimum smoke path is:
+
+```bash
+python scripts/airi_ios_testflight.py \
+  --team-id KA4786U458 \
+  --bundle-id com.tianhaoxi.airi.pocket \
+  --skip-install \
+  --skip-web-build \
+  --unsigned-archive
+```
