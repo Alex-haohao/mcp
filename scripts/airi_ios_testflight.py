@@ -21,6 +21,10 @@ ARCHIVE_PATH = BUILD_DIR / "AIRI.xcarchive"
 EXPORT_DIR = BUILD_DIR / "export"
 EXPORT_OPTIONS_PATH = BUILD_DIR / "ExportOptions.plist"
 PROVISIONING_PROFILES_DIR = Path.home() / "Library" / "MobileDevice" / "Provisioning Profiles"
+XCODE_PROVISIONING_PROFILES_DIR = (
+    Path.home() / "Library" / "Developer" / "Xcode" / "UserData" / "Provisioning Profiles"
+)
+PROVISIONING_PROFILE_DIRS = (PROVISIONING_PROFILES_DIR, XCODE_PROVISIONING_PROFILES_DIR)
 CAPACITOR_SYNC_TRACKED_FILES = [
     Path("apps/stage-pocket/ios/App/CapApp-SPM/Package.swift"),
     Path(
@@ -537,6 +541,16 @@ def decode_mobileprovision(path: Path) -> dict[str, object] | None:
         return None
 
 
+def mobileprovision_paths(
+    profiles_dirs: tuple[Path, ...] = PROVISIONING_PROFILE_DIRS,
+) -> list[Path]:
+    paths: list[Path] = []
+    for profiles_dir in profiles_dirs:
+        if profiles_dir.exists():
+            paths.extend(profiles_dir.glob("*.mobileprovision"))
+    return sorted(paths)
+
+
 def profile_matches_bundle(
     profile: dict[str, object],
     *,
@@ -567,13 +581,13 @@ def matching_development_profile_names(
     *,
     team_id: str | None,
     bundle_id: str | None,
-    profiles_dir: Path = PROVISIONING_PROFILES_DIR,
+    profiles_dirs: tuple[Path, ...] = PROVISIONING_PROFILE_DIRS,
 ) -> list[str]:
-    if not team_id or not bundle_id or not profiles_dir.exists():
+    if not team_id or not bundle_id:
         return []
 
     names: list[str] = []
-    for profile_path in profiles_dir.glob("*.mobileprovision"):
+    for profile_path in mobileprovision_paths(profiles_dirs):
         profile = decode_mobileprovision(profile_path)
         if not profile:
             continue

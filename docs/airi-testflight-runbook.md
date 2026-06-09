@@ -11,7 +11,7 @@ projects/airi/apps/stage-pocket/ios/App/App.xcodeproj
 
 ## Current Local Verification
 
-Verified locally:
+Verified locally on 2026-06-10:
 
 - AIRI submodule cloned at `projects/airi`.
 - `pnpm@10.33.0` installed through Corepack.
@@ -19,40 +19,55 @@ Verified locally:
 - `pnpm -F @proj-airi/stage-pocket build` completed.
 - `pnpm -F @proj-airi/stage-pocket exec cap sync ios` completed.
 - iOS simulator build completed with signing disabled.
-- iOS generic archive completed only when code signing identity was blank, which produces an unsigned archive.
+- Xcode account access verified for Team `77NLS6U772`.
+- A connected iPhone device build completed and let Xcode create `iOS Team Provisioning Profile: *`.
+- Signing diagnostics pass for Team ID, Bundle ID, Apple Development identity, development provisioning profile, Apple Distribution identity, and App Store Connect API key settings.
+- iOS Release archive completed at `build/airi-testflight/AIRI.xcarchive`.
+- App Store Connect IPA export completed at `build/airi-testflight/export/App.ipa`.
 - The workspace build script runs Capacitor sync before native builds and restores the tracked Xcode SPM files changed by sync when they were clean before the build.
 
-Current unsigned archive:
+Current signed archive and exported IPA:
 
 ```text
 build/airi-testflight/AIRI.xcarchive
+build/airi-testflight/export/App.ipa
 ```
 
-The unsigned archive proves the app can compile for device, but it cannot be uploaded to TestFlight.
+The current remaining blocker is the App Store Connect app record. A direct upload reached App Store Connect but failed with:
+
+```text
+Cannot determine the Apple ID from Bundle ID 'com.tianhaoxi.airi.pocket' and platform 'IOS'. (19)
+```
+
+Create an App Store Connect app record for the Bundle ID before retrying TestFlight upload.
 
 ## Signing Requirements
 
-TestFlight requires an App Store signed archive. The current local machine only exposes an Apple Development identity:
+TestFlight requires an Apple Developer team, a Bundle ID, local signing identities, provisioning profile access, and an App Store Connect app record.
+
+Current local signing target:
 
 ```text
-Apple Development: ... (KA4786U458)
+Team ID: 77NLS6U772
+Bundle ID: com.tianhaoxi.airi.pocket
 ```
 
-The CLI signed archive with your inferred Team ID currently fails because Xcode cannot complete the App Store distribution signing path. The current observed failure is:
+The local machine has both Apple Development and Apple Distribution identities for the selected team. Xcode 26 may store automatically created provisioning profiles here:
 
 ```text
-App is automatically signed for development, but a conflicting code signing identity Apple Distribution has been manually specified.
+~/Library/Developer/Xcode/UserData/Provisioning Profiles
 ```
 
-Earlier attempts also reported missing account/profile access for Team `KA4786U458`. Treat both as the same external blocker: Xcode needs access to the Apple Developer account, an App ID/provisioning profile for the Bundle ID, and an Apple Distribution signing identity for App Store/TestFlight archives.
+The build script scans both that Xcode directory and the older MobileDevice profile directory.
 
-To finish TestFlight upload, first open Xcode and complete:
+To finish TestFlight upload, create the App Store Connect app:
 
-1. `Xcode > Settings > Accounts`
-2. Add or refresh your Apple Developer account.
-3. Confirm the team ID is available.
-4. Create or allow Xcode to create an App ID for your Bundle ID.
-5. Ensure Apple Distribution signing is available for App Store/TestFlight upload.
+1. Open App Store Connect.
+2. Go to `Apps`.
+3. Create a new iOS app.
+4. Select Bundle ID `com.tianhaoxi.airi.pocket`.
+5. Set the app name, primary language, and SKU.
+6. Save, then rerun the upload command.
 
 Recommended Bundle ID:
 
@@ -69,7 +84,7 @@ The build script automatically reads this repository's local `.env` file before 
 Useful local keys:
 
 ```dotenv
-AIRI_IOS_TEAM_ID=KA4786U458
+AIRI_IOS_TEAM_ID=77NLS6U772
 AIRI_IOS_BUNDLE_ID=com.tianhaoxi.airi.pocket
 AIRI_IOS_SIGNING_STYLE=automatic
 AIRI_IOS_PROVISIONING_PROFILE=
@@ -107,7 +122,7 @@ The workspace script wraps the verified commands:
 
 ```bash
 python scripts/airi_ios_testflight.py \
-  --team-id KA4786U458 \
+  --team-id 77NLS6U772 \
   --bundle-id com.tianhaoxi.airi.pocket
 ```
 
@@ -123,7 +138,7 @@ By default this creates a signed archive only. Add `--export-ipa` after signing 
 
 ```bash
 python scripts/airi_ios_testflight.py \
-  --team-id KA4786U458 \
+  --team-id 77NLS6U772 \
   --bundle-id com.tianhaoxi.airi.pocket \
   --export-ipa
 ```
@@ -148,13 +163,13 @@ python scripts/airi_ios_testflight.py \
   --upload-testflight
 ```
 
-The script never writes App Store Connect secrets into the repository.
+The script never writes App Store Connect secrets into the repository. If upload fails with `Cannot determine the Apple ID from Bundle ID`, the signing/export path is working but App Store Connect does not yet have an app record for that Bundle ID.
 
 If automatic signing remains unreliable, use manual App Store signing:
 
 ```bash
 python scripts/airi_ios_testflight.py \
-  --team-id KA4786U458 \
+  --team-id 77NLS6U772 \
   --bundle-id com.tianhaoxi.airi.pocket \
   --signing-style manual \
   --provisioning-profile "<APP_STORE_PROFILE_NAME_OR_UUID>" \
@@ -166,7 +181,7 @@ Capacitor sync updates a small set of tracked Xcode SPM files inside the AIRI su
 
 Avoid `--skip-sync` unless the Xcode project is already prepared from a prior sync. Skipping sync against a restored checkout can make Xcode fail to resolve local Capacitor plugin packages.
 
-After Xcode account/signing is fixed, the signed archive should appear under:
+After signing is healthy, the signed archive should appear under:
 
 ```text
 build/airi-testflight/AIRI.xcarchive

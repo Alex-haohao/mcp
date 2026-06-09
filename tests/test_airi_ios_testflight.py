@@ -273,6 +273,24 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
             )
         )
 
+    def test_profile_matches_wildcard_development_bundle(self):
+        profile = {
+            "TeamIdentifier": ["TEAM123456"],
+            "Entitlements": {
+                "application-identifier": "TEAM123456.*",
+                "get-task-allow": True,
+            },
+        }
+
+        self.assertTrue(
+            self.script.profile_matches_bundle(
+                profile,
+                team_id="TEAM123456",
+                bundle_id="com.example.airi",
+                development=True,
+            )
+        )
+
     def test_profile_rejects_distribution_when_development_required(self):
         profile = {
             "TeamIdentifier": ["TEAM123456"],
@@ -290,6 +308,51 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
                 development=True,
             )
         )
+
+    def test_matching_development_profiles_scan_xcode_user_data_dir(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            mobile_device_dir = Path(tmp_dir) / "MobileDevice" / "Provisioning Profiles"
+            xcode_dir = Path(tmp_dir) / "Xcode" / "UserData" / "Provisioning Profiles"
+            mobile_device_dir.mkdir(parents=True)
+            xcode_dir.mkdir(parents=True)
+            ignored_profile = mobile_device_dir / "ignored.mobileprovision"
+            matched_profile = xcode_dir / "matched.mobileprovision"
+            ignored_profile.write_text("ignored", encoding="utf-8")
+            matched_profile.write_text("matched", encoding="utf-8")
+
+            original_decode = self.script.decode_mobileprovision
+
+            def fake_decode(path: Path):
+                if path == matched_profile:
+                    return {
+                        "Name": "iOS Team Provisioning Profile: *",
+                        "TeamIdentifier": ["TEAM123456"],
+                        "Entitlements": {
+                            "application-identifier": "TEAM123456.*",
+                            "get-task-allow": True,
+                        },
+                    }
+                return {
+                    "Name": "Other Team Profile",
+                    "TeamIdentifier": ["OTHERTEAM"],
+                    "Entitlements": {
+                        "application-identifier": "OTHERTEAM.*",
+                        "get-task-allow": True,
+                    },
+                }
+
+            try:
+                self.script.decode_mobileprovision = fake_decode
+
+                names = self.script.matching_development_profile_names(
+                    team_id="TEAM123456",
+                    bundle_id="com.example.airi",
+                    profiles_dirs=(mobile_device_dir, xcode_dir),
+                )
+            finally:
+                self.script.decode_mobileprovision = original_decode
+
+        self.assertEqual(names, ["iOS Team Provisioning Profile: *"])
 
 
 if __name__ == "__main__":

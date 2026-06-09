@@ -200,4 +200,4 @@ python scripts/airi_ios_testflight.py \
   --upload-testflight
 ```
 
-The script reads local AIRI/App Store Connect settings from `.env` and keeps secrets out of Git. The current local build has verified the AIRI iOS simulator build and an unsigned device archive. A TestFlight upload still requires Xcode to have access to your Apple Developer account and App Store signing assets.
+The script reads local AIRI/App Store Connect settings from `.env` and keeps secrets out of Git. The current local configuration for Team `77NLS6U772` and Bundle ID `com.tianhaoxi.airi.pocket` passes signing diagnostics, Release archive, and App Store Connect IPA export. The remaining upload prerequisite is an App Store Connect app record for that Bundle ID; without it, `altool` reports that it cannot determine the Apple ID for the Bundle ID.
