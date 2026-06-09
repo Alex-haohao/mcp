@@ -94,11 +94,12 @@ The diagnostic checks:
 1. AIRI submodule checkout
 2. Team ID and Bundle ID
 3. local Apple Development identity
-4. local Apple Distribution identity
-5. App Store Connect API key path, key ID, and issuer ID
-6. manual provisioning profile when `AIRI_IOS_SIGNING_STYLE=manual`
+4. local development provisioning profile for the Bundle ID
+5. local Apple Distribution identity
+6. App Store Connect API key path, key ID, and issuer ID
+7. manual provisioning profile when `AIRI_IOS_SIGNING_STYLE=manual`
 
-It does not print secret values and does not contact Apple. For CLI TestFlight upload, every item should be `ok`. If `Apple Distribution identity` is missing, open Xcode and refresh the Apple Developer account, or create/download the distribution certificate and private key for the selected team. If the ASC API key items are missing, create an App Store Connect API key and put the `.p8` file outside this repository.
+It does not print secret values and does not contact Apple. For CLI TestFlight upload, every item should be `ok`. If `Development provisioning profile` is missing, open Xcode with the selected Apple Developer team and let automatic signing create a profile for the Bundle ID, or create one in the Apple Developer portal. If `Apple Distribution identity` is missing, refresh the Apple Developer account in Xcode, or create/download the distribution certificate and private key for the selected team. If the ASC API key items are missing, create an App Store Connect API key and put the `.p8` file outside this repository.
 
 ## Build Script
 
@@ -132,6 +133,8 @@ The exported IPA will be under:
 ```text
 build/airi-testflight/export/
 ```
+
+In automatic signing mode, the script signs the archive with `Apple Development` to avoid AIRI upstream's Release configuration forcing `Apple Distribution` before Xcode has completed automatic provisioning. The App Store Connect export step then performs App Store distribution signing.
 
 To upload with the CLI, create an App Store Connect API key in App Store Connect and provide these values through environment variables or command-line flags:
 

@@ -20,6 +20,7 @@ DERIVED_DATA_DIR = ROOT_DIR / "build" / "airi-derived-data"
 ARCHIVE_PATH = BUILD_DIR / "AIRI.xcarchive"
 EXPORT_DIR = BUILD_DIR / "export"
 EXPORT_OPTIONS_PATH = BUILD_DIR / "ExportOptions.plist"
+PROVISIONING_PROFILES_DIR = Path.home() / "Library" / "MobileDevice" / "Provisioning Profiles"
 CAPACITOR_SYNC_TRACKED_FILES = [
     Path("apps/stage-pocket/ios/App/CapApp-SPM/Package.swift"),
     Path(
@@ -334,8 +335,8 @@ def build_signing_settings(
         settings.append("CODE_SIGN_IDENTITY=")
     elif signing_style == "manual":
         settings.append(f"CODE_SIGN_IDENTITY={code_sign_identity or 'Apple Distribution'}")
-    elif code_sign_identity:
-        settings.append(f"CODE_SIGN_IDENTITY={code_sign_identity}")
+    else:
+        settings.append(f"CODE_SIGN_IDENTITY={code_sign_identity or 'Apple Development'}")
     return settings
 
 
@@ -526,6 +527,67 @@ def path_status(path_value: str | None) -> tuple[bool, str]:
     return True, f"found: {path}"
 
 
+def decode_mobileprovision(path: Path) -> dict[str, object] | None:
+    result = run_capture(["security", "cms", "-D", "-i", str(path)], cwd=ROOT_DIR)
+    if result.returncode != 0:
+        return None
+    try:
+        return plistlib.loads(result.stdout.encode("utf-8"))
+    except plistlib.InvalidFileException:
+        return None
+
+
+def profile_matches_bundle(
+    profile: dict[str, object],
+    *,
+    team_id: str,
+    bundle_id: str,
+    development: bool,
+) -> bool:
+    team_ids = profile.get("TeamIdentifier")
+    if not isinstance(team_ids, list) or team_id not in team_ids:
+        return False
+
+    entitlements = profile.get("Entitlements")
+    if not isinstance(entitlements, dict):
+        return False
+    app_id = entitlements.get("application-identifier")
+    if not isinstance(app_id, str):
+        return False
+    if app_id != f"{team_id}.{bundle_id}" and app_id != f"{team_id}.*":
+        return False
+
+    get_task_allow = entitlements.get("get-task-allow")
+    if development and get_task_allow is not True:
+        return False
+    return True
+
+
+def matching_development_profile_names(
+    *,
+    team_id: str | None,
+    bundle_id: str | None,
+    profiles_dir: Path = PROVISIONING_PROFILES_DIR,
+) -> list[str]:
+    if not team_id or not bundle_id or not profiles_dir.exists():
+        return []
+
+    names: list[str] = []
+    for profile_path in profiles_dir.glob("*.mobileprovision"):
+        profile = decode_mobileprovision(profile_path)
+        if not profile:
+            continue
+        if profile_matches_bundle(
+            profile,
+            team_id=team_id,
+            bundle_id=bundle_id,
+            development=True,
+        ):
+            name = profile.get("Name")
+            names.append(str(name or profile_path.name))
+    return sorted(set(names))
+
+
 def build_signing_diagnostics(
     *,
     team_id: str | None,
@@ -536,6 +598,7 @@ def build_signing_diagnostics(
     key_id: str | None,
     issuer_id: str | None,
     identity_names: list[str],
+    development_profile_names: list[str],
 ) -> list[tuple[str, bool, str]]:
     key_path_ok, key_path_detail = path_status(key_path)
     has_development_identity = has_identity(
@@ -560,6 +623,11 @@ def build_signing_diagnostics(
             "Apple Development identity",
             has_development_identity,
             "present" if has_development_identity else "missing",
+        ),
+        (
+            "Development provisioning profile",
+            bool(development_profile_names),
+            ", ".join(development_profile_names) if development_profile_names else "missing",
         ),
         (
             "Apple Distribution identity",
@@ -589,6 +657,10 @@ def diagnose_signing(args: argparse.Namespace) -> int:
         key_id=args.authentication_key_id,
         issuer_id=args.authentication_key_issuer_id,
         identity_names=code_signing_identity_names(),
+        development_profile_names=matching_development_profile_names(
+            team_id=args.team_id,
+            bundle_id=args.bundle_id,
+        ),
     )
     for label, ok, detail in diagnostics:
         marker = "ok" if ok else "missing"

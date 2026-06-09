@@ -37,6 +37,7 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
         self.assertIn("PRODUCT_BUNDLE_IDENTIFIER=com.example.airi", settings)
         self.assertIn("CODE_SIGN_STYLE=Automatic", settings)
         self.assertIn("PROVISIONING_PROFILE_SPECIFIER=", settings)
+        self.assertIn("CODE_SIGN_IDENTITY=Apple Development", settings)
         self.assertNotIn("CODE_SIGN_IDENTITY=", settings)
 
     def test_unsigned_archive_settings_blank_identity(self):
@@ -221,12 +222,14 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
             key_id=None,
             issuer_id=None,
             identity_names=["Apple Development: Example (TEAM123456)"],
+            development_profile_names=[],
         )
         by_label = {label: ok for label, ok, _ in diagnostics}
 
         self.assertFalse(by_label["Team ID"])
         self.assertFalse(by_label["Bundle ID"])
         self.assertTrue(by_label["Apple Development identity"])
+        self.assertFalse(by_label["Development provisioning profile"])
         self.assertFalse(by_label["Apple Distribution identity"])
         self.assertFalse(by_label["ASC API key path"])
 
@@ -247,9 +250,46 @@ class AiriIosTestFlightScriptTests(unittest.TestCase):
                     "Apple Development: Example (TEAM123456)",
                     "Apple Distribution: Example, Inc. (TEAM123456)",
                 ],
+                development_profile_names=["AIRI Development"],
             )
 
         self.assertTrue(all(ok for _, ok, _ in diagnostics))
+
+    def test_profile_matches_exact_development_bundle(self):
+        profile = {
+            "TeamIdentifier": ["TEAM123456"],
+            "Entitlements": {
+                "application-identifier": "TEAM123456.com.example.airi",
+                "get-task-allow": True,
+            },
+        }
+
+        self.assertTrue(
+            self.script.profile_matches_bundle(
+                profile,
+                team_id="TEAM123456",
+                bundle_id="com.example.airi",
+                development=True,
+            )
+        )
+
+    def test_profile_rejects_distribution_when_development_required(self):
+        profile = {
+            "TeamIdentifier": ["TEAM123456"],
+            "Entitlements": {
+                "application-identifier": "TEAM123456.com.example.airi",
+                "get-task-allow": False,
+            },
+        }
+
+        self.assertFalse(
+            self.script.profile_matches_bundle(
+                profile,
+                team_id="TEAM123456",
+                bundle_id="com.example.airi",
+                development=True,
+            )
+        )
 
 
 if __name__ == "__main__":
