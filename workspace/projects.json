@@ -1,0 +1,18 @@
+{
+  "projects": [
+    {
+      "name": "xiaozhi-mcp",
+      "path": ".",
+      "kind": "python-service",
+      "git": "root",
+      "description": "Cloud bridge that connects XiaoZhi MCP to configured MCP servers."
+    },
+    {
+      "name": "airi",
+      "path": "projects/airi",
+      "kind": "submodule",
+      "git": "https://github.com/moeru-ai/airi.git",
+      "description": "AIRI multi-platform virtual character project. Stage Pocket is used for iOS/TestFlight builds."
+    }
+  ]
+}

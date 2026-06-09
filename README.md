@@ -1,5 +1,17 @@
 # XiaoZhi MCP Bridge
 
+This repository is also the local AI workspace root. Independent AI projects are tracked in `workspace/projects.json`, with external upstream projects placed under `projects/`.
+
+Current workspace projects:
+
+- `xiaozhi-mcp`: this root Python service.
+- `airi`: AIRI upstream submodule at `projects/airi`.
+
+Workspace docs:
+
+- [docs/monorepo-workspace.md](docs/monorepo-workspace.md)
+- [docs/airi-testflight-runbook.md](docs/airi-testflight-runbook.md)
+
 Cloud-hosted MCP bridge for StackChan/XiaoZhi. The bridge connects to `MCP_ENDPOINT`, starts configured local or remote MCP servers, and pipes MCP traffic between XiaoZhi and those servers.
 
 The current production target is Volcengine Web Search through the official Volcengine MCP server.
@@ -169,3 +181,21 @@ A full architecture plan is documented in:
 Social platform MCP integration details are documented in:
 
 [docs/social-mcp-integration-plan.md](docs/social-mcp-integration-plan.md)
+
+## AIRI iOS/TestFlight
+
+AIRI is pinned as a submodule:
+
+```bash
+git submodule update --init --recursive
+```
+
+Build AIRI Stage Pocket for iOS/TestFlight:
+
+```bash
+python scripts/airi_ios_testflight.py \
+  --team-id <APPLE_TEAM_ID> \
+  --bundle-id <IOS_BUNDLE_ID>
+```
+
+The current local build has verified the AIRI iOS simulator build and an unsigned device archive. A TestFlight upload still requires Xcode to have access to your Apple Developer account and App Store signing assets.

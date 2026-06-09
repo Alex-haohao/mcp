@@ -1,0 +1,3 @@
+[submodule "projects/airi"]
+	path = projects/airi
+	url = https://github.com/moeru-ai/airi.git
