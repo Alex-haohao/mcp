@@ -1,6 +1,34 @@
-# XiaoZhi MCP Bridge
+# AI Workspace Monorepo
 
-This repository is also the local AI workspace root. Independent AI projects are tracked in `workspace/projects.json`, with external upstream projects placed under `projects/`.
+This repository is the local AI workspace root. It contains one first-party
+service at the root and external/upstream projects under `projects/`.
+
+## Repository Map
+
+- `mcp_pipe.py`: entrypoint for the root XiaoZhi MCP bridge service.
+- `mcp_bridge/`: root Python package for MCP config loading, command building,
+  tool policy, output shaping, and secret redaction.
+- `mcp_config.json`: enabled MCP server definitions for the bridge.
+- `scripts/`: operational scripts for preflight, deployment, MCP smoke checks,
+  direct tool calls, Volcengine search checks, and AIRI iOS/TestFlight builds.
+- `tests/`: root Python logic tests. Prefer these over UI-heavy tests.
+- `deploy/`: systemd unit and server deployment assets for the MCP bridge.
+- `docs/`: runbooks and architecture notes.
+- `workspace/projects.json`: workspace project inventory.
+- `projects/airi/`: AIRI upstream git submodule. Treat it as an independent
+  upstream project inside this workspace.
+
+## Agent Orientation
+
+- For XiaoZhi/MCP bridge work, start from `mcp_pipe.py`, `mcp_config.json`,
+  `mcp_bridge/`, and `tests/`.
+- For AIRI work, stay inside `projects/airi/` unless changing workspace scripts
+  or documentation. `projects/airi/apps/stage-pocket` is the iOS/Capacitor app,
+  and `projects/airi/apps/server` is AIRI's optional backend.
+- Do not commit secrets. Local credentials live in `.env`, which is ignored by
+  Git.
+- Keep root scripts and docs small and task-focused. Remove stale instructions
+  when behavior changes.
 
 Current workspace projects:
 
@@ -200,4 +228,4 @@ python scripts/airi_ios_testflight.py \
   --upload-testflight
 ```
 
-The script reads local AIRI/App Store Connect settings from `.env` and keeps secrets out of Git. The current local configuration for Team `77NLS6U772` and Bundle ID `com.tianhaoxi.airi.pocket` passes signing diagnostics, Release archive, and App Store Connect IPA export. The remaining upload prerequisite is an App Store Connect app record for that Bundle ID; without it, `altool` reports that it cannot determine the Apple ID for the Bundle ID.
+The script reads local AIRI/App Store Connect settings from `.env` and keeps secrets out of Git. The current local configuration for Team `77NLS6U772` and Bundle ID `com.tianhaoxi.airi.pocket` passes signing diagnostics, Release archive, App Store Connect IPA export, and TestFlight upload. The most recent upload succeeded with Delivery UUID `2051b5d4-3bdf-4527-8763-9a70f2942347`.
