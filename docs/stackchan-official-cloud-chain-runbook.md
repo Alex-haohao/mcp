@@ -109,6 +109,72 @@ quoting issues:
 The server private key stays on the server. The app only receives values needed
 by the official client protocol.
 
+## iOS Device Signing
+
+Keep the official iOS signing defaults in source control and use a local
+override for real-device deployment. The StackChan app branch parameterizes the
+Runner target with:
+
+```text
+STACKCHAN_IOS_DEVELOPMENT_TEAM
+STACKCHAN_IOS_BUNDLE_IDENTIFIER
+STACKCHAN_IOS_DISPLAY_NAME
+```
+
+`Runner/Info.plist` keeps `CFBundleIdentifier` as
+`$(PRODUCT_BUNDLE_IDENTIFIER)` so the local override reaches the built app
+bundle. It also reads `CFBundleDisplayName` from
+`$(STACKCHAN_IOS_DISPLAY_NAME)` so the local build can be visually separated
+from an official app already installed on the same phone.
+
+The tracked default file is
+`app/ios/Flutter/StackChanSigning.xcconfig`, which keeps the official
+`NG678HLKHZ` / `com.m5stack.StackChan` values. For this local workstation,
+create the ignored file `app/ios/Flutter/Signing.local.xcconfig`:
+
+```text
+STACKCHAN_IOS_DEVELOPMENT_TEAM=77NLS6U772
+STACKCHAN_IOS_BUNDLE_IDENTIFIER=com.tianhaoxi.stackchan
+STACKCHAN_IOS_DISPLAY_NAME=StackChan Dev
+```
+
+Verify the resolved settings before installing to a phone:
+
+```bash
+cd .worktrees/StackChan-server-app/app
+xcodebuild -workspace ios/Runner.xcworkspace \
+  -scheme Runner \
+  -configuration Debug \
+  -showBuildSettings | rg "DEVELOPMENT_TEAM|PRODUCT_BUNDLE_IDENTIFIER|STACKCHAN_IOS"
+```
+
+Then install through the root Flutter wrapper so the current self-hosted server
+and RSA dart-define values are injected without printing secrets:
+
+```bash
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false run -- \
+  -d 00008150-000C18EE0A87801C \
+  --no-resident
+```
+
+If Flutter builds the app but fails while starting the Xcode debug session, use
+the signed build plus `devicectl` path instead:
+
+```bash
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false print-config
+cd .worktrees/StackChan-server-app/app
+flutter build ios --debug \
+  --dart-define-from-file=/Users/tianhaoxi/project/mcp/workspace/stackchan-secrets/server/app-dart-defines.generated.env
+cd /Users/tianhaoxi/project/mcp
+xcrun devicectl device install app \
+  --device 00008150-000C18EE0A87801C \
+  .worktrees/StackChan-server-app/app/build/ios/iphoneos/Runner.app
+xcrun devicectl device process launch \
+  --device 00008150-000C18EE0A87801C \
+  com.tianhaoxi.stackchan \
+  --terminate-existing
+```
+
 ## Research Notes
 
 Sources checked on 2026-06-30:
