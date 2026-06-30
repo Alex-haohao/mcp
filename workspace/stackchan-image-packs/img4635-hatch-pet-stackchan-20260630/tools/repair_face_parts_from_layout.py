@@ -204,6 +204,29 @@ def repair(run_dir: Path, layout_path: Path) -> dict[str, Any]:
         "policy": "concept-derived eye frame0 plus deterministic blink compression; mouth frames resized into the explicit face slot",
     }
     write_json(run_dir / "qa/semantic-fit/repair-summary.json", summary)
+    write_json(
+        run_dir / "qa/postprocess-summary.json",
+        {
+            "ok": True,
+            "run_dir": str(run_dir),
+            "mode": "face-layout-repair",
+            "layout": str(layout_path),
+            "processed_count": len(repaired),
+            "processed": [
+                {
+                    "path": path,
+                    "operation": "repair from accepted concept face slot",
+                }
+                for path in repaired
+            ],
+            "policy": (
+                "The generic chroma-key postprocess step is intentionally not rerun after "
+                "face-slot repair because it recenters strips globally and can invalidate "
+                "the accepted semantic fit. This summary records the deterministic repair "
+                "postprocess that produced the decoded assets used by finalization."
+            ),
+        },
+    )
     return summary
 
 

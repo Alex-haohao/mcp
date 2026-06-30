@@ -137,6 +137,7 @@ stackchan-image-pack/
 - Finalizes decoded outputs into a complete `final/` pack by splitting eye and mouth strips into individual frames.
 - Validates final `manifest.json`.
 - Creates a 6-emotion contact sheet, semantic-fit diagnostics, anchor-fit diagnostics, motion sheet, and expression preview GIFs for visual QA.
+- Records either generic postprocess evidence or targeted face-layout repair evidence in `qa/postprocess-summary.json`.
 
 ### What The Skill Does Not Do
 
@@ -162,11 +163,12 @@ stackchan-image-pack/
 8. Create or update `references/face-layout.json` before accepting a repaired or visually questioned pack.
 9. Run `finalize_stackchan_pack.py` to create `final/manifest.json` and all individual frame PNGs.
 10. Run validation.
-11. Run semantic-fit diagnostics and inspect `qa/semantic-fit/neutral-semantic-overlay.png`.
-12. Generate and inspect contact sheet plus motion sheet.
-13. Run anchor-fit diagnostics and inspect `qa/anchor-fit/*-concept-vs-overlay.png`.
-14. Render and inspect preview GIFs.
-15. Convert final PNGs to LVGL descriptors only after source-level semantic-fit and anchor-fit pass.
+11. Ensure `qa/postprocess-summary.json` describes the final decoded assets. For ordinary generation this comes from `postprocess_stackchan_assets.py`; for targeted face-slot repairs it must be written by the repair tool with `mode: "face-layout-repair"`.
+12. Run semantic-fit diagnostics and inspect `qa/semantic-fit/neutral-semantic-overlay.png`.
+13. Generate and inspect contact sheet plus motion sheet.
+14. Run anchor-fit diagnostics and inspect `qa/anchor-fit/*-concept-vs-overlay.png`.
+15. Render and inspect preview GIFs.
+16. Convert final PNGs to LVGL descriptors only after source-level semantic-fit and anchor-fit pass.
 
 Firmware integration now lives in the workspace StackChan fork submodule:
 
@@ -317,7 +319,9 @@ Required evidence before LVGL conversion or flashing:
 - First-frame mouth dimensions are checked for readability; a closed mouth that is only a few pixels wide/high is a repair candidate even if it is centered.
 - The reviewer explicitly classifies failures as anchor calibration, eye/mouth strip quality, body-base mismatch, or runtime integration before changing code.
 
-Do not fix this class of issue by directly nudging firmware constants first. Firmware constants should be regenerated from accepted manifest anchors. If source-level composition is wrong, repair the manifest or source strips and rerun postprocess, finalize, validation, semantic-fit, contact sheet, motion sheet, anchor-fit diagnostics, and previews. Only investigate LVGL/runtime coordinate behavior when source-level overlay images look correct but the device does not.
+Do not fix this class of issue by directly nudging firmware constants first. Firmware constants should be regenerated from accepted manifest anchors. If source-level composition is wrong, repair the manifest or source strips and record the postprocess evidence for the final decoded assets, then rerun finalize, validation, semantic-fit, contact sheet, motion sheet, anchor-fit diagnostics, and previews. Only investigate LVGL/runtime coordinate behavior when source-level overlay images look correct but the device does not.
+
+Important postprocess rule for repaired packs: do not blindly rerun the generic chroma-key/strip-centering postprocess over eye and mouth strips that have already been placed against `references/face-layout.json`. Generic recentering can pass structural checks while destroying semantic face placement. A targeted repair tool should write `qa/postprocess-summary.json` with `mode: "face-layout-repair"` and the acceptance proof must come from semantic-fit, anchor-fit, motion-sheet, contact-sheet, and preview artifacts after finalization.
 
 For the earlier broken IMG4635 pack, the observed evidence was:
 
@@ -334,6 +338,7 @@ The repaired IMG4635 pack uses an explicit `references/face-layout.json` derived
 - firmware offsets are derived from those anchors as `(-24,-38)`, `(22,-38)`, `(-2,-11)`;
 - `qa/semantic-fit/semantic-fit-report.json` is `ok: true`;
 - `qa/anchor-fit/anchor-fit-report.json` is `ok: true`;
+- `qa/postprocess-summary.json` has `mode: "face-layout-repair"`;
 - `qa/motion-sheet.png` verifies eye and mouth frame progressions independently.
 
 Therefore the durable fix is to make semantic-fit, anchor-fit comparison, motion-sheet review, and mouth readability part of acceptance, not to apply one-off coordinate patches after flashing.

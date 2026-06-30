@@ -1,0 +1,82 @@
+{
+  "ok": true,
+  "run_dir": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630",
+  "mode": "face-layout-repair",
+  "layout": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/references/face-layout.json",
+  "processed_count": 18,
+  "processed": [
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-neutral-left.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-neutral-right.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/mouth-neutral.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-happy-left.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-happy-right.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/mouth-happy.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-angry-left.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-angry-right.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/mouth-angry.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-sad-left.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-sad-right.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/mouth-sad.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-doubt-left.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-doubt-right.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/mouth-doubt.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-sleepy-left.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/eyes-sleepy-right.png",
+      "operation": "repair from accepted concept face slot"
+    },
+    {
+      "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/parts/mouth-sleepy.png",
+      "operation": "repair from accepted concept face slot"
+    }
+  ],
+  "policy": "The generic chroma-key postprocess step is intentionally not rerun after face-slot repair because it recenters strips globally and can invalidate the accepted semantic fit. This summary records the deterministic repair postprocess that produced the decoded assets used by finalization."
+}

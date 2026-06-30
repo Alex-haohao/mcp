@@ -270,6 +270,7 @@ Current repaired IMG4635 status:
 
 - accepted anchors are `leftEye=(136,82)`, `rightEye=(182,82)`, `mouth=(158,109)`;
 - firmware offsets are derived from those anchors as left eye `(-24,-38)`, right eye `(22,-38)`, mouth `(-2,-11)`;
+- `qa/postprocess-summary.json` records the targeted `face-layout-repair` postprocess used for the final decoded eye/mouth strips;
 - `qa/semantic-fit/semantic-fit-report.json` is `ok: true`;
 - `qa/anchor-fit/anchor-fit-report.json` is `ok: true`;
 - `qa/motion-sheet.png` exists and separates eye progression from mouth progression;
@@ -280,6 +281,7 @@ Durable rule: do not treat manifest/descriptor validity as visual acceptance. Be
 ```text
 qa/semantic-fit/semantic-fit-report.json
 qa/semantic-fit/neutral-semantic-overlay.png
+qa/postprocess-summary.json
 qa/motion-sheet.png
 qa/anchor-fit/anchor-fit-report.json
 qa/anchor-fit/neutral-concept-vs-overlay.png
