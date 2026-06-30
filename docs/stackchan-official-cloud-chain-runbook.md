@@ -332,10 +332,35 @@ flutter analyze --no-fatal-infos --no-fatal-warnings
 flutter test --reporter compact
 ```
 
+Use the root wrapper when the App should be built or tested against the current
+cloud staging endpoint without exposing RSA values on the command line:
+
+```bash
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false pub-get
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false test -- --reporter compact
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false build-ios-debug
+```
+
+The wrapper reads `workspace/stackchan-secrets/server/app-dart-defines.env`,
+writes an ignored `app-dart-defines.generated.env`, and passes it to Flutter via
+`--dart-define-from-file`.
+
 The official app currently has existing analyzer warnings/infos. Treat a
 non-fatal analyzer pass as the current gate for this branch, and do not broaden
 the branch into a full official-app lint cleanup unless we intentionally open a
 separate cleanup phase.
+
+Flutter 3.44 enables Swift Package Manager integration by default. The current
+StackChan dependency set fails iOS build during SwiftPM generation for
+`opus_codec_ios`, so the app branch disables SwiftPM at the project level and
+continues using CocoaPods. This follows Flutter's documented single-project
+escape hatch and should be revisited when upstream dependencies support SwiftPM
+cleanly.
+
+iOS build also requires CocoaPods 1.16.2 or newer with Xcode 26 project files.
+Older CocoaPods/xcodeproj versions fail on `PBXFileSystemSynchronizedRootGroup`.
+The App branch removes the hardcoded git mirror source from `ios/Podfile` so
+CocoaPods can use its default CDN instead of cloning a full Specs repository.
 
 The obsolete generated counter widget test was replaced with logic tests for:
 
