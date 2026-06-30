@@ -3,5 +3,8 @@ __pycache__/
 node_modules/
 
 .env
+.worktrees/
+workspace/stackchan-cloud/
+workspace/stackchan-secrets/
 build/
 .DS_Store

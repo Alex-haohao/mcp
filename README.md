@@ -47,6 +47,7 @@ Workspace docs:
 - [docs/airi-testflight-runbook.md](docs/airi-testflight-runbook.md)
 - [docs/stackchan-official-device-context.md](docs/stackchan-official-device-context.md)
 - [docs/stackchan-image-pack-generation-skill.md](docs/stackchan-image-pack-generation-skill.md)
+- [docs/stackchan-official-cloud-chain-runbook.md](docs/stackchan-official-cloud-chain-runbook.md)
 
 Cloud-hosted MCP bridge for StackChan/XiaoZhi. The bridge connects to `MCP_ENDPOINT`, starts configured local or remote MCP servers, and pipes MCP traffic between XiaoZhi and those servers.
 
