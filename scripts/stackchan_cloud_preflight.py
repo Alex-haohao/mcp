@@ -43,6 +43,12 @@ APP_DART_DEFINE_KEYS = (
     "STACKCHAN_BLUE_PRIVATE_KEY_BASE64",
 )
 
+M5STACK_LOGIN_CONFIG_KEYS = (
+    "loginUrl",
+    "issuer",
+    "audience",
+)
+
 REQUIRED_REMOTE_KEYS = (
     "SERVER_IP",
     "SERVER_USERNAME",
@@ -110,6 +116,29 @@ def version_at_least(actual: tuple[int, ...], expected: tuple[int, ...]) -> bool
     actual_padded = actual + (0,) * (width - len(actual))
     expected_padded = expected + (0,) * (width - len(expected))
     return actual_padded >= expected_padded
+
+
+def parse_simple_yaml_section(path: Path, section: str) -> dict[str, str]:
+    values: dict[str, str] = {}
+    if not path.exists():
+        return values
+
+    in_section = False
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
+            continue
+        if not raw_line.startswith((" ", "\t")):
+            key = raw_line.split(":", 1)[0].strip()
+            in_section = key == section
+            continue
+        if not in_section or ":" not in raw_line:
+            continue
+        key, value = raw_line.split(":", 1)
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        values[key.strip()] = value
+    return values
 
 
 def check_local(stackchan_dir: Path, env: dict[str, str], run_server_tests: bool) -> list[Check]:
@@ -192,6 +221,19 @@ def check_local(stackchan_dir: Path, env: dict[str, str], run_server_tests: bool
         )
     )
 
+    config_path_value = env.get("STACKCHAN_CONFIG_PATH")
+    if config_path_value:
+        config_path = Path(config_path_value).expanduser()
+        m5stack_values = parse_simple_yaml_section(config_path, "m5stack")
+        missing_m5stack = [key for key in M5STACK_LOGIN_CONFIG_KEYS if not m5stack_values.get(key)]
+        checks.append(
+            Check(
+                "M5Stack login config",
+                "OK" if not missing_m5stack else "WARN",
+                f"{config_path}; missing: {', '.join(missing_m5stack) or 'none'}",
+            )
+        )
+
     return checks
 
 
@@ -254,6 +296,30 @@ fi
 if command -v curl >/dev/null 2>&1; then
   WS_STATUS="$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:12800/stackChan/ws 2>/dev/null || true)"
   printf 'remote.stackchan.ws_no_auth=%s\n' "${WS_STATUS:-unavailable}"
+fi
+
+CONFIG=/opt/stackchan-server/shared/config.yaml
+if [ -r "$CONFIG" ]; then
+  printf 'remote.stackchan.config=present\n'
+  if grep -q '^m5stack:' "$CONFIG"; then
+    printf 'remote.stackchan.m5stack=present\n'
+    for key in loginUrl issuer audience; do
+      value="$(awk -v key="$key" '
+        /^m5stack:/ {in_block=1; next}
+        /^[^[:space:]]/ {in_block=0}
+        in_block && $1 == key":" {sub(/^[^:]*:[[:space:]]*/, ""); print; exit}
+      ' "$CONFIG")"
+      if [ -n "$value" ] && [ "$value" != '""' ] && [ "$value" != "''" ]; then
+        printf 'remote.stackchan.m5stack.%s=set\n' "$key"
+      else
+        printf 'remote.stackchan.m5stack.%s=empty\n' "$key"
+      fi
+    done
+  else
+    printf 'remote.stackchan.m5stack=missing\n'
+  fi
+else
+  printf 'remote.stackchan.config=missing\n'
 fi
 
 printf 'remote.ports.begin\n'

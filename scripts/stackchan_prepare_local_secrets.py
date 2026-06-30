@@ -100,6 +100,13 @@ admin:
     - username: "stackchan-admin"
       password: "{admin_password}"
 
+m5stack:
+  loginUrl: "https://forum.m5stack.com/api/v3/utilities/login"
+  registrationUrl: ""
+  registrationToken: ""
+  issuer: "stackchan-self-hosted"
+  audience: "stackchan-app"
+
 rsa:
   server:
     public: |

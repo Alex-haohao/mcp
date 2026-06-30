@@ -258,6 +258,41 @@ MySQL root socket was not available to the deployment user, so the default
 bring-up path is Docker Compose with an isolated StackChan MySQL container. This
 avoids changing permissions or passwords on the server's existing MySQL service.
 
+## App Login Chain
+
+The StackChan app login is not a local-only username/password check. The
+self-hosted server forwards `/stackChan/v2/user/login` to the configured
+`m5stack.loginUrl`; after a successful remote response, the server stores the
+user locally and issues its own JWT for app APIs.
+
+Required non-secret login config:
+
+```yaml
+m5stack:
+  loginUrl: "https://forum.m5stack.com/api/v3/utilities/login"
+  registrationUrl: ""
+  registrationToken: ""
+  issuer: "stackchan-self-hosted"
+  audience: "stackchan-app"
+```
+
+`registrationUrl` and `registrationToken` are still placeholders unless we add
+a real account-registration path. Existing M5Stack/forum accounts should use the
+login path above.
+
+Failure mode seen on 2026-07-01: if the `m5stack` block is missing, `/api.json`
+and `/stackChan/apps` still look healthy, but login returns a confusing
+`{"code":300,"message":", ","data":null}` because the server posts to an empty
+remote login URL. After adding `m5stack.loginUrl`, a probe with fake credentials
+returns the expected M5Stack/NodeBB error:
+
+```json
+{"code":300,"message":"[[error:invalid-login-credentials]]","data":null}
+```
+
+That response means the self-hosted server is correctly reaching M5Stack auth;
+use a real M5Stack account in the phone app for the full login test.
+
 ## Cloud Preflight
 
 Run the non-secret local checks:
@@ -384,6 +419,9 @@ Latest smoke result:
 - `/file/music/stackchan_music.mp3`: HTTP 200.
 - `/stackChan/ws` without auth: HTTP 401, expected because the real app/device
   session must authenticate.
+- `/stackChan/v2/user/login` with fake credentials: HTTP 200 with
+  `code=300` and `[[error:invalid-login-credentials]]`, expected because this
+  proves the request reached the configured M5Stack login endpoint.
 
 Local environment state:
 
@@ -421,7 +459,7 @@ cloud staging endpoint without exposing RSA values on the command line:
 ```bash
 scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false pub-get
 scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false test -- --reporter compact
-scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false build-ios-debug
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false build-ios-release
 ```
 
 The wrapper reads `workspace/stackchan-secrets/server/app-dart-defines.env`,
