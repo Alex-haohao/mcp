@@ -10,7 +10,7 @@ This runbook records the official M5Stack StackChan context needed before integr
 - M5Stack Arduino image-files example: https://docs.m5stack.com/en/arduino/stackchan/pic
 - M5Stack StackChan open-source repo, reviewed at `0286f72`: https://github.com/m5stack/StackChan/tree/0286f72
 - Local writable fork submodule: `projects/StackChan`, fork URL https://github.com/Alex-haohao/StackChan
-- Current local setup branch: `codex/image-avatar` at `2968fdd`, based on official `0286f72` plus a hygiene ignore for host-test build output.
+- Current local setup branch: `codex/image-avatar` at `834b27f`, based on official `0286f72` plus ImageAvatar implementation commits.
 - M5Stack StackChan-BSP Arduino library, reviewed at `f7ed40e`: https://github.com/m5stack/StackChan-BSP/tree/f7ed40e
 - Current generated pack in this repo: `workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/manifest.json`
 
@@ -208,6 +208,65 @@ The runtime pack contract is:
 
 This conservative component-sprite contract is a good fit for the official firmware because the firmware already uses normalized `Feature` values. Do not move to high-count full-screen frame swaps until a device benchmark proves the need and budget.
 
+## Current Firmware Integration State
+
+Implemented in the `projects/StackChan` submodule on branch `codex/image-avatar`:
+
+- commit `981ff8b`: host-tested ImageAvatar mapping helpers;
+- commit `834b27f`: optional ImageAvatar skin, complete generated pack assets, Kconfig wiring, and firmware-local docs;
+- `CONFIG_STACKCHAN_AVATAR_SKIN_DEFAULT` remains the default;
+- `CONFIG_STACKCHAN_AVATAR_SKIN_IMAGE` enables the generated image skin in the Avatar app;
+- official `Avatar`, `Feature`, JSON control, HAL, app/server protocol, and `DefaultAvatar` remain unchanged.
+
+The image skin is additive under:
+
+```text
+firmware/main/stackchan/avatar/skins/image/
+```
+
+The generated LVGL descriptors are under:
+
+```text
+firmware/main/stackchan/avatar/skins/image/packs/assets/
+```
+
+Current generated firmware asset footprint:
+
+```text
+73 LVGL RGB565A8 descriptor files
+5.7M generated C source under packs/assets
+```
+
+Frame mapping notes:
+
+- body uses one shared 320x240 base layer;
+- expression changes swap eye and mouth frame arrays;
+- eye frames are generated open-to-closed, so eye weight mapping is reversed to preserve official semantics where `weight=100` means open;
+- mouth frames are generated closed-to-open, so mouth weight mapping is direct;
+- anchors from `manifest.json` are converted to screen-center offsets: left eye `(-20, -36)`, right eye `(20, -36)`, mouth `(0, -11)`.
+
+Verification completed locally:
+
+```text
+cmake --build build-host-tests
+ctest --test-dir build-host-tests --output-on-failure
+git diff --check
+temporary fake-LVGL syntax check for pack descriptors and representative assets
+preprocessor asset-reference check: 73 referenced, 0 missing, 0 unused
+```
+
+Verification still pending:
+
+```text
+idf.py build
+idf.py flash monitor
+device smoke test with default skin
+device smoke test with image skin
+official app/WebSocket/BLE avatar-control smoke test
+```
+
+Reason: `idf.py` is not installed or not sourced in the current machine environment. Install or source ESP-IDF v5.5.x before the next firmware verification pass.
+
 ## Arduino Position
 
 Arduino can be used, but only for bring-up or asset inspection.
@@ -235,14 +294,14 @@ Add an image skin beside the official default skin:
 firmware/main/stackchan/avatar/skins/image/
 ```
 
-The first version should add:
+The current first version adds:
 
 - pure frame-mapping helpers, host-testable without LVGL;
 - a manifest-derived or generated pack descriptor;
 - `ImageSpriteFeature` for eyes and mouth;
 - `ImageAvatar` as an `Avatar` implementation parallel to `DefaultAvatar`;
 - Kconfig switch to choose default vs image skin;
-- narrow hook in `AppAvatar::onOpen()` and ESP-NOW control app if needed.
+- narrow hook in `AppAvatar::onOpen()`.
 
 Do not change the public JSON control shape first. Existing mobile app and server control should continue to work through:
 
@@ -272,67 +331,40 @@ Upgrade path only after smoke testing:
 
 ## Immediate Next Steps
 
-1. Confirm the official firmware submodule and branch.
+1. Install or source ESP-IDF v5.5.x.
 
 ```bash
-cd /Users/tianhaoxi/project/mcp/projects/StackChan
-git status
-git remote -v
-git checkout codex/image-avatar
+idf.py --version
 ```
 
-Expected: `origin` points to `Alex-haohao/StackChan`, `upstream` points to `m5stack/StackChan`, and the work branch is `codex/image-avatar`.
+Expected: `ESP-IDF v5.5.x`. Current environment result: `idf.py` is not found.
 
-2. Fetch official firmware dependencies and run baseline host tests.
+2. Build the firmware with the default avatar selected.
 
 ```bash
 cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
-python3 ./fetch_repos.py
-cmake -S tests -B build-host-tests
-cmake --build build-host-tests
-ctest --test-dir build-host-tests --output-on-failure
+idf.py build
 ```
 
-3. Build the pure mapping layer first.
+Expected: build succeeds with `CONFIG_STACKCHAN_AVATAR_SKIN_DEFAULT`.
 
-Add host-tested logic for:
+3. Build the firmware with ImageAvatar selected.
 
-- emotion enum to manifest emotion key;
-- `weight 0..100` to sprite frame index;
-- normalized position to pixel offset;
-- optional size/rotation passthrough policy.
-
-4. Convert the accepted pack into firmware assets.
-
-Use the current final pack as the source:
+Use menuconfig:
 
 ```text
-/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final
+StackChan Avatar -> Avatar Skin -> Image Avatar
 ```
 
-Create a firmware staging directory that can later become custom `assets.bin` content or generated LVGL descriptors.
+Then:
 
-5. Add the first `ImageAvatar` skin.
-
-Keep it narrow:
-
-- one 320x240 body image;
-- left/right eye image objects;
-- one mouth image object;
-- per-emotion frame arrays;
-- frame index selected by current `weight`;
-- anchors from `manifest.json`.
-
-6. Hook it behind Kconfig.
-
-Default should remain official `DefaultAvatar`. Add a build-time option such as:
-
-```text
-CONFIG_STACKCHAN_AVATAR_SKIN_DEFAULT
-CONFIG_STACKCHAN_AVATAR_SKIN_IMAGE
+```bash
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
+idf.py fullclean
+idf.py build
 ```
 
-7. Build, flash, and smoke-test on hardware.
+4. Flash and smoke-test on hardware.
 
 Minimum acceptance:
 
@@ -345,7 +377,7 @@ Minimum acceptance:
 - close/reopen path does not leak or leave hidden LVGL objects;
 - OTA/server/app features are not broken by the skin switch.
 
-8. Feed device findings back into this repo.
+5. Feed device findings back into this repo.
 
 Update:
 
@@ -367,12 +399,41 @@ Keep StackChan documentation in the root workspace current whenever any of these
 
 The root docs explain the why and workflow; the `projects/StackChan` submodule contains the implementation. Do not bury durable process knowledge only inside ad hoc terminal history or submodule commits.
 
+## Upstream Sync Discipline
+
+Treat `projects/StackChan` as a small, reviewable fork of official M5Stack source, not as a permanent hard fork.
+
+Required rules for future changes:
+
+- Keep `m5stack/StackChan` configured as read-only `upstream` and regularly fetch it before larger work.
+- Prefer additive code under isolated directories such as `firmware/main/stackchan/avatar/skins/image/`.
+- Keep official core abstractions stable unless a compile error or narrow integration seam requires a small change.
+- Avoid broad rewrites of `Avatar`, `Feature`, JSON protocol, HAL, app/server protocol, or factory firmware flows.
+- Put host-testable logic in standalone files before touching LVGL or ESP-IDF runtime code.
+- Keep commits small and topic-focused so future `upstream/main` merges are easy to inspect.
+- When a change touches an official file, explain why that file had to change in the commit message or nearby root documentation.
+- Do not vendor generated firmware dependencies into the root workspace; keep dependency output ignored inside the StackChan submodule.
+- After each meaningful submodule commit, update the root submodule pointer and any affected StackChan docs together.
+
+Before merging official updates:
+
+```bash
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
+git fetch upstream
+git checkout codex/image-avatar
+git rebase upstream/main
+cmake --build firmware/build-host-tests
+ctest --test-dir firmware/build-host-tests --output-on-failure
+```
+
+If a rebase conflict appears in a large official file, stop and reassess the local patch shape before resolving mechanically. The preferred fix is usually to shrink or move our local change behind a smaller seam, not to keep expanding the conflict surface.
+
 ## Current Decision
 
-The next engineering step is not more image generation. The next step is official firmware bring-up:
+The next engineering step is not more image generation. The next step is ESP-IDF and device bring-up:
 
 ```text
-official checkout -> baseline tests -> ImageAvatar mapping test -> asset conversion -> firmware skin -> device smoke test
+source/install ESP-IDF -> default build -> image-skin build -> flash -> device smoke test
 ```
 
 Only generate more frames or new art after device screenshots show a specific problem.

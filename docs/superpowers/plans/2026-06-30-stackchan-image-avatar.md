@@ -10,6 +10,10 @@
 
 **Tech Stack:** Official `m5stack/StackChan` firmware, ESP-IDF v5.5.4, C++17, LVGL, `smooth_lvgl`, official host-side CMake tests under `firmware/tests`.
 
+**Upstream policy:** Keep this fork easy to sync with official `m5stack/StackChan`. Prefer additive files under `firmware/main/stackchan/avatar/skins/image/`, keep official core abstractions and protocols unchanged, and make every official-file edit narrow enough to survive future `upstream/main` rebases.
+
+**Current execution status (2026-06-30):** Tasks 1 and 2 are complete. Tasks 3, 4, 5, 6, 8, and 9 were implemented in one complete pass rather than the older staged 3-expression path: the current submodule commit is `834b27f feat: add image avatar skin`, pushed to `origin/codex/image-avatar`. The implementation includes all six emotions, four eye frames per side, four mouth frames, Kconfig selection, firmware-local docs, and complete generated LVGL descriptors. Host tests pass, `git diff --check` passes, and a temporary fake-LVGL syntax/preprocessor check confirms all 73 generated assets are referenced. Full `idf.py build`, flash, and hardware smoke tests remain pending because `idf.py` is not installed or sourced in this environment.
+
 ---
 
 ## Scope Boundary
@@ -965,12 +969,16 @@ git commit -m "feat: add image avatar skin"
 Modify `firmware/main/Kconfig.projbuild`:
 
 ```text
-config STACKCHAN_USE_IMAGE_AVATAR
-    bool "Use custom ImageAvatar skin in the Avatar app"
-    default n
-    help
-        Enables the custom image-based avatar skin while keeping the official
-        DefaultAvatar compiled and available.
+choice STACKCHAN_AVATAR_SKIN
+    prompt "Avatar Skin"
+    default STACKCHAN_AVATAR_SKIN_DEFAULT
+
+    config STACKCHAN_AVATAR_SKIN_DEFAULT
+        bool "Default Avatar"
+
+    config STACKCHAN_AVATAR_SKIN_IMAGE
+        bool "Image Avatar"
+endchoice
 ```
 
 - [ ] **Step 2: Add includes**
@@ -979,7 +987,6 @@ Modify `firmware/main/apps/app_avatar/app_avatar.cpp`:
 
 ```cpp
 #include <stackchan/avatar/skins/image/image_avatar.h>
-#include <stackchan/avatar/skins/image/packs/my_stackchan_pack.h>
 ```
 
 - [ ] **Step 3: Replace only the avatar construction block**
@@ -996,8 +1003,8 @@ GetStackChan().attachAvatar(std::move(avatar));
 With:
 
 ```cpp
-#if CONFIG_STACKCHAN_USE_IMAGE_AVATAR
-    auto avatar = std::make_unique<avatar::image::ImageAvatar>(avatar::image::packs::kMyStackChanPack);
+#if CONFIG_STACKCHAN_AVATAR_SKIN_IMAGE
+    auto avatar = std::make_unique<avatar::image::ImageAvatar>();
 #else
     auto avatar = std::make_unique<avatar::DefaultAvatar>();
 #endif
@@ -1013,15 +1020,20 @@ cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py build
 ```
 
-Expected: build succeeds with `CONFIG_STACKCHAN_USE_IMAGE_AVATAR` disabled.
+Expected: build succeeds with `CONFIG_STACKCHAN_AVATAR_SKIN_DEFAULT` selected.
 
 - [ ] **Step 5: Build with ImageAvatar enabled**
 
-Use menuconfig or a local sdkconfig overlay:
+Use menuconfig:
+
+```text
+StackChan Avatar -> Avatar Skin -> Image Avatar
+```
+
+Then build:
 
 ```bash
 cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
-printf 'CONFIG_STACKCHAN_USE_IMAGE_AVATAR=y\n' > sdkconfig.defaults.local
 idf.py fullclean
 idf.py build
 ```
@@ -1073,8 +1085,8 @@ Expected:
 ```text
 Device boots.
 Avatar app opens.
-ImageAvatar appears when CONFIG_STACKCHAN_USE_IMAGE_AVATAR=y.
-DefaultAvatar still appears when CONFIG_STACKCHAN_USE_IMAGE_AVATAR=n.
+ImageAvatar appears when `CONFIG_STACKCHAN_AVATAR_SKIN_IMAGE` is selected.
+DefaultAvatar still appears when `CONFIG_STACKCHAN_AVATAR_SKIN_DEFAULT` is selected.
 No reboot loop.
 No LVGL assertion.
 No image allocation failure.
@@ -1171,7 +1183,7 @@ ImageAvatar is an optional image-based avatar skin for StackChan.
 Enable it with:
 
 ```text
-CONFIG_STACKCHAN_USE_IMAGE_AVATAR=y
+StackChan Avatar -> Avatar Skin -> Image Avatar
 ```
 
 The skin keeps the official avatar protocol:
@@ -1202,7 +1214,7 @@ Frame selection:
 - position is clamped to `-100..100`
 - position maps to the part-specific offset range
 
-The default avatar remains available when `CONFIG_STACKCHAN_USE_IMAGE_AVATAR=n`.
+The default avatar remains available when `CONFIG_STACKCHAN_AVATAR_SKIN_DEFAULT` is selected.
 ```
 
 - [ ] **Step 2: Run final verification**
