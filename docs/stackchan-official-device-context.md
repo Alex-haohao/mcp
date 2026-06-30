@@ -226,7 +226,7 @@ check `idf.py build` size output after every asset update.
 
 ## Current Image Pack State
 
-Current accepted generated pack:
+Current generated pack under visual review:
 
 ```text
 workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/
@@ -256,6 +256,37 @@ Validation status:
   "warnings": []
 }
 ```
+
+Important: structural validation is not release acceptance. An earlier device review after flashing showed that the body proportions were roughly correct, but eyes and mouth had unacceptable placement/proportion. The source-level diagnosis indicated this was primarily an image-pack QA failure, not an LVGL descriptor or general firmware coordinate failure:
+
+- source body is 320x240 and centered;
+- eye and mouth PNG frames use the expected dimensions and are internally centered;
+- broken manifest anchors were `leftEye=(140,84)`, `rightEye=(180,84)`, `mouth=(160,109)`;
+- firmware converted those to screen-center offsets `(-20,-36)`, `(20,-36)`, `(0,-11)`;
+- source-level overlay already shows eyes too high/close and mouth too high/small;
+- neutral closed mouth content is about `21x7` inside a 96x48 frame, making it weak at 320x240 device scale.
+
+Current repaired IMG4635 status:
+
+- accepted anchors are `leftEye=(136,82)`, `rightEye=(182,82)`, `mouth=(158,109)`;
+- firmware offsets are derived from those anchors as left eye `(-24,-38)`, right eye `(22,-38)`, mouth `(-2,-11)`;
+- `qa/semantic-fit/semantic-fit-report.json` is `ok: true`;
+- `qa/anchor-fit/anchor-fit-report.json` is `ok: true`;
+- `qa/motion-sheet.png` exists and separates eye progression from mouth progression;
+- ImageAvatar firmware built with ESP-IDF v5.5.4 and flashed to `/dev/cu.usbmodem101`; boot logs reached Launcher and created AVATAR/AI.AGENT apps.
+
+Durable rule: do not treat manifest/descriptor validity as visual acceptance. Before regenerating LVGL descriptors or flashing a new pack, run the image-pack semantic-fit and anchor-fit diagnostics and inspect:
+
+```text
+qa/semantic-fit/semantic-fit-report.json
+qa/semantic-fit/neutral-semantic-overlay.png
+qa/motion-sheet.png
+qa/anchor-fit/anchor-fit-report.json
+qa/anchor-fit/neutral-concept-vs-overlay.png
+qa/anchor-fit/neutral-manifest-overlay.png
+```
+
+Only change firmware placement constants after the source manifest and generated overlays are accepted. If overlays are wrong, repair the manifest anchors or the source eye/mouth strips and rerun the full deterministic QA chain.
 
 Size snapshot:
 
@@ -312,7 +343,7 @@ Frame mapping notes:
 - expression changes swap eye and mouth frame arrays;
 - eye frames are generated open-to-closed, so eye weight mapping is reversed to preserve official semantics where `weight=100` means open;
 - mouth frames are generated closed-to-open, so mouth weight mapping is direct;
-- anchors from `manifest.json` are converted to screen-center offsets: left eye `(-20, -36)`, right eye `(20, -36)`, mouth `(0, -11)`.
+- anchors from the accepted `manifest.json` are converted to screen-center offsets by `firmware/tools/sync_image_avatar_pack.py`: left eye `(-24, -38)`, right eye `(22, -38)`, mouth `(-2, -11)`.
 
 Verification completed locally:
 
@@ -322,19 +353,23 @@ ctest --test-dir build-host-tests --output-on-failure
 git diff --check
 temporary fake-LVGL syntax check for pack descriptors and representative assets
 preprocessor asset-reference check: 73 referenced, 0 missing, 0 unused
+validate_stackchan_pack.py
+diagnose_stackchan_semantic_fit.py
+diagnose_stackchan_anchor_fit.py
+make_stackchan_motion_sheet.py
+render_stackchan_motion_previews.py
+idf.py build
+idf.py -p /dev/cu.usbmodem101 flash
+idf.py -p /dev/cu.usbmodem101 monitor boot smoke
 ```
 
-Verification still pending:
+Verification still pending after the current flash:
 
 ```text
-idf.py build
-idf.py flash monitor
-device smoke test with default skin
-device smoke test with image skin
+human visual check on physical screen after opening Avatar
+device smoke test with default skin if switching back to default config
 official app/WebSocket/BLE avatar-control smoke test
 ```
-
-Reason: `idf.py` is not installed or not sourced in the current machine environment. Install or source ESP-IDF v5.5.x before the next firmware verification pass.
 
 ## Arduino Position
 

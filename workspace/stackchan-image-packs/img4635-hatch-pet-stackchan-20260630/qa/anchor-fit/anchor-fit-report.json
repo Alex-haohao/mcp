@@ -1,0 +1,685 @@
+{
+  "ok": true,
+  "manifest": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/manifest.json",
+  "emotion": "neutral",
+  "canvas_center": [
+    160.0,
+    120.0
+  ],
+  "anchors": {
+    "leftEye": {
+      "x": 136,
+      "y": 82
+    },
+    "rightEye": {
+      "x": 182,
+      "y": 82
+    },
+    "mouth": {
+      "x": 158,
+      "y": 109
+    }
+  },
+  "anchor_offsets_from_canvas_center": {
+    "leftEye": [
+      -24.0,
+      -38.0
+    ],
+    "rightEye": [
+      22.0,
+      -38.0
+    ],
+    "mouth": [
+      -2.0,
+      -11.0
+    ]
+  },
+  "overlay_boxes": [
+    {
+      "part": "leftEye",
+      "box": [
+        112,
+        58,
+        160,
+        106
+      ]
+    },
+    {
+      "part": "rightEye",
+      "box": [
+        158,
+        58,
+        206,
+        106
+      ]
+    },
+    {
+      "part": "mouth",
+      "box": [
+        110,
+        85,
+        206,
+        133
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "path": "body/base.png",
+      "size": [
+        320,
+        240
+      ],
+      "bbox": [
+        70,
+        2,
+        249,
+        238
+      ],
+      "content_size": [
+        179,
+        236
+      ],
+      "content_center": [
+        159.5,
+        120.0
+      ],
+      "frame_center": [
+        160.0,
+        120.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 26140
+    },
+    {
+      "path": "eyes/neutral/left_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 446,
+      "emotion": "neutral",
+      "part": "leftEye"
+    },
+    {
+      "path": "eyes/neutral/right_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 437,
+      "emotion": "neutral",
+      "part": "rightEye"
+    },
+    {
+      "path": "mouth/neutral/0.png",
+      "size": [
+        96,
+        48
+      ],
+      "bbox": [
+        35,
+        20,
+        61,
+        27
+      ],
+      "content_size": [
+        26,
+        7
+      ],
+      "content_center": [
+        48.0,
+        23.5
+      ],
+      "frame_center": [
+        48.0,
+        24.0
+      ],
+      "center_delta": [
+        0.0,
+        -0.5
+      ],
+      "alpha_pixels": 155,
+      "emotion": "neutral",
+      "part": "mouth"
+    },
+    {
+      "path": "eyes/happy/left_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 445,
+      "emotion": "happy",
+      "part": "leftEye"
+    },
+    {
+      "path": "eyes/happy/right_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 461,
+      "emotion": "happy",
+      "part": "rightEye"
+    },
+    {
+      "path": "mouth/happy/0.png",
+      "size": [
+        96,
+        48
+      ],
+      "bbox": [
+        35,
+        20,
+        61,
+        27
+      ],
+      "content_size": [
+        26,
+        7
+      ],
+      "content_center": [
+        48.0,
+        23.5
+      ],
+      "frame_center": [
+        48.0,
+        24.0
+      ],
+      "center_delta": [
+        0.0,
+        -0.5
+      ],
+      "alpha_pixels": 144,
+      "emotion": "happy",
+      "part": "mouth"
+    },
+    {
+      "path": "eyes/angry/left_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 420,
+      "emotion": "angry",
+      "part": "leftEye"
+    },
+    {
+      "path": "eyes/angry/right_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 428,
+      "emotion": "angry",
+      "part": "rightEye"
+    },
+    {
+      "path": "mouth/angry/0.png",
+      "size": [
+        96,
+        48
+      ],
+      "bbox": [
+        35,
+        20,
+        61,
+        27
+      ],
+      "content_size": [
+        26,
+        7
+      ],
+      "content_center": [
+        48.0,
+        23.5
+      ],
+      "frame_center": [
+        48.0,
+        24.0
+      ],
+      "center_delta": [
+        0.0,
+        -0.5
+      ],
+      "alpha_pixels": 147,
+      "emotion": "angry",
+      "part": "mouth"
+    },
+    {
+      "path": "eyes/sad/left_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 422,
+      "emotion": "sad",
+      "part": "leftEye"
+    },
+    {
+      "path": "eyes/sad/right_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 444,
+      "emotion": "sad",
+      "part": "rightEye"
+    },
+    {
+      "path": "mouth/sad/0.png",
+      "size": [
+        96,
+        48
+      ],
+      "bbox": [
+        35,
+        20,
+        61,
+        27
+      ],
+      "content_size": [
+        26,
+        7
+      ],
+      "content_center": [
+        48.0,
+        23.5
+      ],
+      "frame_center": [
+        48.0,
+        24.0
+      ],
+      "center_delta": [
+        0.0,
+        -0.5
+      ],
+      "alpha_pixels": 145,
+      "emotion": "sad",
+      "part": "mouth"
+    },
+    {
+      "path": "eyes/doubt/left_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 438,
+      "emotion": "doubt",
+      "part": "leftEye"
+    },
+    {
+      "path": "eyes/doubt/right_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 404,
+      "emotion": "doubt",
+      "part": "rightEye"
+    },
+    {
+      "path": "mouth/doubt/0.png",
+      "size": [
+        96,
+        48
+      ],
+      "bbox": [
+        35,
+        20,
+        61,
+        27
+      ],
+      "content_size": [
+        26,
+        7
+      ],
+      "content_center": [
+        48.0,
+        23.5
+      ],
+      "frame_center": [
+        48.0,
+        24.0
+      ],
+      "center_delta": [
+        0.0,
+        -0.5
+      ],
+      "alpha_pixels": 165,
+      "emotion": "doubt",
+      "part": "mouth"
+    },
+    {
+      "path": "eyes/sleepy/left_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 351,
+      "emotion": "sleepy",
+      "part": "leftEye"
+    },
+    {
+      "path": "eyes/sleepy/right_0.png",
+      "size": [
+        48,
+        48
+      ],
+      "bbox": [
+        10,
+        12,
+        37,
+        36
+      ],
+      "content_size": [
+        27,
+        24
+      ],
+      "content_center": [
+        23.5,
+        24.0
+      ],
+      "frame_center": [
+        24.0,
+        24.0
+      ],
+      "center_delta": [
+        -0.5,
+        0.0
+      ],
+      "alpha_pixels": 344,
+      "emotion": "sleepy",
+      "part": "rightEye"
+    },
+    {
+      "path": "mouth/sleepy/0.png",
+      "size": [
+        96,
+        48
+      ],
+      "bbox": [
+        35,
+        20,
+        61,
+        27
+      ],
+      "content_size": [
+        26,
+        7
+      ],
+      "content_center": [
+        48.0,
+        23.5
+      ],
+      "frame_center": [
+        48.0,
+        24.0
+      ],
+      "center_delta": [
+        0.0,
+        -0.5
+      ],
+      "alpha_pixels": 143,
+      "emotion": "sleepy",
+      "part": "mouth"
+    }
+  ],
+  "warnings": [],
+  "artifacts": {
+    "manifest_overlay": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/qa/anchor-fit/neutral-manifest-overlay.png",
+    "wrong_top_left_diagnostic": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/qa/anchor-fit/neutral-wrong-top-left-diagnostic.png",
+    "concept_vs_overlay": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/qa/anchor-fit/neutral-concept-vs-overlay.png"
+  },
+  "manual_gate": [
+    "Open concept_vs_overlay and confirm eyes and mouth fit the intended face, not only the canvas.",
+    "Reject the pack if the overlay looks materially worse than the concept face.",
+    "Treat warnings as repair inputs, not as automatic acceptance."
+  ]
+}

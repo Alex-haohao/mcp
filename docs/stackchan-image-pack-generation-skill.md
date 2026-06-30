@@ -118,6 +118,9 @@ stackchan-image-pack/
     finalize_stackchan_pack.py
     validate_stackchan_pack.py
     make_stackchan_contact_sheet.py
+    make_stackchan_motion_sheet.py
+    diagnose_stackchan_semantic_fit.py
+    diagnose_stackchan_anchor_fit.py
     render_stackchan_motion_previews.py
     selftest_stackchan_pack.py
 ```
@@ -133,7 +136,7 @@ stackchan-image-pack/
 - Records selected generated outputs, promotes canonical style, and marks jobs complete.
 - Finalizes decoded outputs into a complete `final/` pack by splitting eye and mouth strips into individual frames.
 - Validates final `manifest.json`.
-- Creates a 6-emotion contact sheet and expression preview GIFs for visual QA.
+- Creates a 6-emotion contact sheet, semantic-fit diagnostics, anchor-fit diagnostics, motion sheet, and expression preview GIFs for visual QA.
 
 ### What The Skill Does Not Do
 
@@ -156,10 +159,14 @@ stackchan-image-pack/
    - `eyes-<emotion>-left.png` and `eyes-<emotion>-right.png` strips
    - `mouth-<emotion>.png` strips
    - `decorators/heart.png`, `sweat.png`, `anger.png`, `tear.png`, `dizzy.png`
-8. Run `finalize_stackchan_pack.py` to create `final/manifest.json` and all individual frame PNGs.
-9. Run validation.
-10. Generate and inspect contact sheet plus preview GIFs.
-11. Convert final PNGs to LVGL descriptors only after the pack is accepted.
+8. Create or update `references/face-layout.json` before accepting a repaired or visually questioned pack.
+9. Run `finalize_stackchan_pack.py` to create `final/manifest.json` and all individual frame PNGs.
+10. Run validation.
+11. Run semantic-fit diagnostics and inspect `qa/semantic-fit/neutral-semantic-overlay.png`.
+12. Generate and inspect contact sheet plus motion sheet.
+13. Run anchor-fit diagnostics and inspect `qa/anchor-fit/*-concept-vs-overlay.png`.
+14. Render and inspect preview GIFs.
+15. Convert final PNGs to LVGL descriptors only after source-level semantic-fit and anchor-fit pass.
 
 Firmware integration now lives in the workspace StackChan fork submodule:
 
@@ -224,6 +231,29 @@ Create contact sheet:
   --output /absolute/path/to/run/qa/contact-sheet.png
 ```
 
+Create semantic-fit diagnostics:
+
+```bash
+"$PYTHON" "$SKILL_DIR/scripts/diagnose_stackchan_semantic_fit.py" \
+  --manifest /absolute/path/to/run/final/manifest.json \
+  --layout /absolute/path/to/run/references/face-layout.json
+```
+
+Create anchor-fit diagnostics:
+
+```bash
+"$PYTHON" "$SKILL_DIR/scripts/diagnose_stackchan_anchor_fit.py" \
+  --manifest /absolute/path/to/run/final/manifest.json
+```
+
+Create motion sheet:
+
+```bash
+"$PYTHON" "$SKILL_DIR/scripts/make_stackchan_motion_sheet.py" \
+  --manifest /absolute/path/to/run/final/manifest.json \
+  --output /absolute/path/to/run/qa/motion-sheet.png
+```
+
 Render motion previews:
 
 ```bash
@@ -265,25 +295,62 @@ Recommended asset dimensions:
 
 The final `manifest.json` uses paths relative to itself and is the source of truth for firmware integration.
 
-Default completeness means one body base, six concept previews, twelve eye strips split into 48 eye frames, six mouth strips split into 24 mouth frames, five decorators, `final/manifest.json`, `qa/finalize-summary.json`, `qa/validation.json`, `qa/contact-sheet.png`, and six `qa/previews/*.gif` files.
+Default completeness means one body base, six concept previews, twelve eye strips split into 48 eye frames, six mouth strips split into 24 mouth frames, five decorators, `final/manifest.json`, `qa/finalize-summary.json`, `qa/validation.json`, `qa/semantic-fit/semantic-fit-report.json`, `qa/contact-sheet.png`, `qa/motion-sheet.png`, `qa/anchor-fit/anchor-fit-report.json`, anchor-fit comparison images, and six `qa/previews/*.gif` files.
 
 Default visual completeness also requires one consistent hatch-pet-like StackChan pixel/sprite family. A pack that has all files but looks like mixed illustration styles, bland filler art, or an unpolished character is incomplete.
 
 Default runtime completeness is intentionally not a full-screen animation set. The skill emits component sprites so the firmware can preserve official semantics and map continuous eye/mouth weights to a small number of frames.
 
+## Anchor And Proportion Release Gate
+
+This gate exists because the current IMG4635 pack exposed a process failure: the 320x240 body layer could be centered and structurally valid while the eyes and mouth still looked wrong on the actual face. The root problem was not the LVGL descriptor format and not the overall body scale. The pack used unproven anchor values through finalization, and the QA chain treated validation plus contact-sheet generation as stronger evidence than they actually were.
+
+Required evidence before LVGL conversion or flashing:
+
+- `validate_stackchan_pack.py` passes for structure and dimensions.
+- `diagnose_stackchan_semantic_fit.py` passes against `references/face-layout.json`.
+- `qa/semantic-fit/neutral-semantic-overlay.png` is inspected against the accepted face slots.
+- `make_stackchan_motion_sheet.py` writes `qa/motion-sheet.png`, and eye progression and mouth progression are inspected independently.
+- `diagnose_stackchan_anchor_fit.py` writes `qa/anchor-fit/anchor-fit-report.json`.
+- `qa/anchor-fit/neutral-concept-vs-overlay.png` is inspected against the neutral concept.
+- `qa/anchor-fit/neutral-manifest-overlay.png` is inspected at 320x240 scale.
+- First-frame mouth dimensions are checked for readability; a closed mouth that is only a few pixels wide/high is a repair candidate even if it is centered.
+- The reviewer explicitly classifies failures as anchor calibration, eye/mouth strip quality, body-base mismatch, or runtime integration before changing code.
+
+Do not fix this class of issue by directly nudging firmware constants first. Firmware constants should be regenerated from accepted manifest anchors. If source-level composition is wrong, repair the manifest or source strips and rerun postprocess, finalize, validation, semantic-fit, contact sheet, motion sheet, anchor-fit diagnostics, and previews. Only investigate LVGL/runtime coordinate behavior when source-level overlay images look correct but the device does not.
+
+For the earlier broken IMG4635 pack, the observed evidence was:
+
+- body source is 320x240 and centered;
+- eye and mouth source frames have correct dimensions and are internally centered;
+- broken anchors were `leftEye=(140,84)`, `rightEye=(180,84)`, `mouth=(160,109)`;
+- those anchors convert to firmware offsets `(-20,-36)`, `(20,-36)`, `(0,-11)`;
+- source-level overlay already shows eyes too high/close and mouth too high/small;
+- neutral closed mouth content is about `21x7` inside a 96x48 frame, which is weak at device scale.
+
+The repaired IMG4635 pack uses an explicit `references/face-layout.json` derived from the accepted concept face:
+
+- accepted anchors are `leftEye=(136,82)`, `rightEye=(182,82)`, `mouth=(158,109)`;
+- firmware offsets are derived from those anchors as `(-24,-38)`, `(22,-38)`, `(-2,-11)`;
+- `qa/semantic-fit/semantic-fit-report.json` is `ok: true`;
+- `qa/anchor-fit/anchor-fit-report.json` is `ok: true`;
+- `qa/motion-sheet.png` verifies eye and mouth frame progressions independently.
+
+Therefore the durable fix is to make semantic-fit, anchor-fit comparison, motion-sheet review, and mouth readability part of acceptance, not to apply one-off coordinate patches after flashing.
+
 ## Guarantee Boundary
 
-The skill can mechanically guarantee structural completeness when the workflow is followed: no pack is accepted until `finalize_stackchan_pack.py`, `validate_stackchan_pack.py`, and contact-sheet generation all pass.
+The skill can mechanically guarantee structural completeness when the workflow is followed: no pack is accepted until `finalize_stackchan_pack.py`, `validate_stackchan_pack.py`, semantic-fit, contact-sheet generation, motion-sheet generation, and anchor-fit diagnostic generation all pass.
 
-The skill cannot mechanically guarantee perfect character taste, expression quality, hatch-pet-like pixel aesthetics, or identity consistency from image generation alone. Those are handled by three style candidates, `art-direction.md`, the contact sheet, preview GIFs, the final visual QA worker, and the QA rubric. If visual QA finds drift, repair the smallest failing component strip or decorator, then rerun finalize, validation, and previews.
+The skill cannot mechanically guarantee perfect character taste, expression quality, hatch-pet-like pixel aesthetics, anchor taste, or identity consistency from image generation alone. Those are handled by three style candidates, `art-direction.md`, the contact sheet, semantic-fit overlay, anchor-fit diagnostics, motion sheet, preview GIFs, the final visual QA worker, and the QA rubric. If visual QA finds drift, repair the smallest failing component strip, anchor set, body layer, or decorator, then rerun the full deterministic QA chain.
 
 For this template, "interpolation" or "difference" images mean the required component animation frames: four eye frames per side per emotion and four mouth frames per emotion. It does not yet define full tweened transitions between two different emotions. If firmware later needs smoother full-expression transitions, extend the frame count and manifest contract before generating assets.
 
 ## Validation Status
 
-The skill was initialized with the official skill-creator script. Its prepare script was dry-run successfully and produced 34 jobs, including the manual `canonical-style` selection job, plus a manifest template. Recording, finalize, validation, contact-sheet, and preview scripts were tested together with temporary transparent PNG fixtures and passed.
+The skill was initialized with the official skill-creator script. Its prepare script was dry-run successfully and produced 34 jobs, including the manual `canonical-style` selection job, plus a manifest template. Recording, postprocess, finalize, validation, semantic-fit, contact-sheet, motion-sheet, anchor-fit, and preview scripts were tested together with temporary transparent PNG fixtures and passed.
 
-The official `quick_validate.py` could not run in this environment because the available Python environment lacks `PyYAML`. A no-dependency frontmatter check passed instead.
+On 2026-06-30, the IMG4635 pack was repaired and verified with `validate_stackchan_pack.py`, `diagnose_stackchan_semantic_fit.py`, `make_stackchan_contact_sheet.py`, `diagnose_stackchan_anchor_fit.py`, `make_stackchan_motion_sheet.py`, and `render_stackchan_motion_previews.py`. The corresponding ImageAvatar firmware built with ESP-IDF v5.5.4 and flashed to `/dev/cu.usbmodem101`; boot logs reached Launcher and created AVATAR/AI.AGENT apps without descriptor errors.
 
 ## Sources
 

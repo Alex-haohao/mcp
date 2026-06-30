@@ -1,0 +1,2010 @@
+{
+  "ok": true,
+  "manifest": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/manifest.json",
+  "layout": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/references/face-layout.json",
+  "errors": [],
+  "warnings": [],
+  "metrics": {
+    "neutral": {
+      "leftEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/left_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            122.0,
+            70.0,
+            149.0,
+            94.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/left_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            122.0,
+            74.0,
+            149.0,
+            90.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/left_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            122.0,
+            78.0,
+            149.0,
+            87.0
+          ],
+          "center": [
+            135.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/left_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            122.0,
+            80.0,
+            149.0,
+            84.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "rightEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/right_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            168.0,
+            70.0,
+            195.0,
+            94.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/right_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            168.0,
+            74.0,
+            195.0,
+            90.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/right_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            168.0,
+            78.0,
+            195.0,
+            87.0
+          ],
+          "center": [
+            181.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/neutral/right_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            168.0,
+            80.0,
+            195.0,
+            84.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "mouth": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/neutral/0.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            35,
+            20,
+            61,
+            27
+          ],
+          "projectedBox": [
+            145.0,
+            105.0,
+            171.0,
+            112.0
+          ],
+          "center": [
+            158.0,
+            108.5
+          ],
+          "contentSize": [
+            26.0,
+            7.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/neutral/1.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            32,
+            18,
+            64,
+            30
+          ],
+          "projectedBox": [
+            142.0,
+            103.0,
+            174.0,
+            115.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            32.0,
+            12.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/neutral/2.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            29,
+            16,
+            67,
+            32
+          ],
+          "projectedBox": [
+            139.0,
+            101.0,
+            177.0,
+            117.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            38.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/neutral/3.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            27,
+            14,
+            69,
+            34
+          ],
+          "projectedBox": [
+            137.0,
+            99.0,
+            179.0,
+            119.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            42.0,
+            20.0
+          ]
+        }
+      ]
+    },
+    "happy": {
+      "leftEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/left_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            122.0,
+            70.0,
+            149.0,
+            94.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/left_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            122.0,
+            74.0,
+            149.0,
+            90.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/left_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            122.0,
+            78.0,
+            149.0,
+            87.0
+          ],
+          "center": [
+            135.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/left_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            122.0,
+            80.0,
+            149.0,
+            84.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "rightEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/right_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            168.0,
+            70.0,
+            195.0,
+            94.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/right_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            168.0,
+            74.0,
+            195.0,
+            90.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/right_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            168.0,
+            78.0,
+            195.0,
+            87.0
+          ],
+          "center": [
+            181.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/happy/right_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            168.0,
+            80.0,
+            195.0,
+            84.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "mouth": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/happy/0.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            35,
+            20,
+            61,
+            27
+          ],
+          "projectedBox": [
+            145.0,
+            105.0,
+            171.0,
+            112.0
+          ],
+          "center": [
+            158.0,
+            108.5
+          ],
+          "contentSize": [
+            26.0,
+            7.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/happy/1.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            32,
+            18,
+            64,
+            30
+          ],
+          "projectedBox": [
+            142.0,
+            103.0,
+            174.0,
+            115.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            32.0,
+            12.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/happy/2.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            29,
+            16,
+            67,
+            32
+          ],
+          "projectedBox": [
+            139.0,
+            101.0,
+            177.0,
+            117.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            38.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/happy/3.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            27,
+            14,
+            69,
+            34
+          ],
+          "projectedBox": [
+            137.0,
+            99.0,
+            179.0,
+            119.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            42.0,
+            20.0
+          ]
+        }
+      ]
+    },
+    "angry": {
+      "leftEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/left_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            122.0,
+            70.0,
+            149.0,
+            94.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/left_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            122.0,
+            74.0,
+            149.0,
+            90.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/left_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            122.0,
+            78.0,
+            149.0,
+            87.0
+          ],
+          "center": [
+            135.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/left_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            122.0,
+            80.0,
+            149.0,
+            84.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "rightEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/right_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            168.0,
+            70.0,
+            195.0,
+            94.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/right_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            168.0,
+            74.0,
+            195.0,
+            90.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/right_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            168.0,
+            78.0,
+            195.0,
+            87.0
+          ],
+          "center": [
+            181.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/angry/right_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            168.0,
+            80.0,
+            195.0,
+            84.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "mouth": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/angry/0.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            35,
+            20,
+            61,
+            27
+          ],
+          "projectedBox": [
+            145.0,
+            105.0,
+            171.0,
+            112.0
+          ],
+          "center": [
+            158.0,
+            108.5
+          ],
+          "contentSize": [
+            26.0,
+            7.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/angry/1.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            32,
+            18,
+            64,
+            30
+          ],
+          "projectedBox": [
+            142.0,
+            103.0,
+            174.0,
+            115.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            32.0,
+            12.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/angry/2.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            29,
+            16,
+            67,
+            32
+          ],
+          "projectedBox": [
+            139.0,
+            101.0,
+            177.0,
+            117.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            38.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/angry/3.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            27,
+            14,
+            69,
+            34
+          ],
+          "projectedBox": [
+            137.0,
+            99.0,
+            179.0,
+            119.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            42.0,
+            20.0
+          ]
+        }
+      ]
+    },
+    "sad": {
+      "leftEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/left_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            122.0,
+            70.0,
+            149.0,
+            94.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/left_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            122.0,
+            74.0,
+            149.0,
+            90.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/left_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            122.0,
+            78.0,
+            149.0,
+            87.0
+          ],
+          "center": [
+            135.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/left_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            122.0,
+            80.0,
+            149.0,
+            84.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "rightEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/right_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            168.0,
+            70.0,
+            195.0,
+            94.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/right_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            168.0,
+            74.0,
+            195.0,
+            90.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/right_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            168.0,
+            78.0,
+            195.0,
+            87.0
+          ],
+          "center": [
+            181.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sad/right_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            168.0,
+            80.0,
+            195.0,
+            84.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "mouth": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sad/0.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            35,
+            20,
+            61,
+            27
+          ],
+          "projectedBox": [
+            145.0,
+            105.0,
+            171.0,
+            112.0
+          ],
+          "center": [
+            158.0,
+            108.5
+          ],
+          "contentSize": [
+            26.0,
+            7.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sad/1.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            32,
+            18,
+            64,
+            30
+          ],
+          "projectedBox": [
+            142.0,
+            103.0,
+            174.0,
+            115.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            32.0,
+            12.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sad/2.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            29,
+            16,
+            67,
+            32
+          ],
+          "projectedBox": [
+            139.0,
+            101.0,
+            177.0,
+            117.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            38.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sad/3.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            27,
+            14,
+            69,
+            34
+          ],
+          "projectedBox": [
+            137.0,
+            99.0,
+            179.0,
+            119.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            42.0,
+            20.0
+          ]
+        }
+      ]
+    },
+    "doubt": {
+      "leftEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/left_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            122.0,
+            70.0,
+            149.0,
+            94.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/left_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            122.0,
+            74.0,
+            149.0,
+            90.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/left_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            122.0,
+            78.0,
+            149.0,
+            87.0
+          ],
+          "center": [
+            135.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/left_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            122.0,
+            80.0,
+            149.0,
+            84.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "rightEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/right_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            168.0,
+            70.0,
+            195.0,
+            94.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/right_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            168.0,
+            74.0,
+            195.0,
+            90.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/right_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            168.0,
+            78.0,
+            195.0,
+            87.0
+          ],
+          "center": [
+            181.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/doubt/right_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            168.0,
+            80.0,
+            195.0,
+            84.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "mouth": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/doubt/0.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            35,
+            20,
+            61,
+            27
+          ],
+          "projectedBox": [
+            145.0,
+            105.0,
+            171.0,
+            112.0
+          ],
+          "center": [
+            158.0,
+            108.5
+          ],
+          "contentSize": [
+            26.0,
+            7.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/doubt/1.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            32,
+            18,
+            64,
+            30
+          ],
+          "projectedBox": [
+            142.0,
+            103.0,
+            174.0,
+            115.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            32.0,
+            12.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/doubt/2.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            29,
+            16,
+            67,
+            32
+          ],
+          "projectedBox": [
+            139.0,
+            101.0,
+            177.0,
+            117.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            38.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/doubt/3.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            27,
+            14,
+            69,
+            34
+          ],
+          "projectedBox": [
+            137.0,
+            99.0,
+            179.0,
+            119.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            42.0,
+            20.0
+          ]
+        }
+      ]
+    },
+    "sleepy": {
+      "leftEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/left_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            122.0,
+            70.0,
+            149.0,
+            94.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/left_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            122.0,
+            74.0,
+            149.0,
+            90.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/left_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            122.0,
+            78.0,
+            149.0,
+            87.0
+          ],
+          "center": [
+            135.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/left_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            122.0,
+            80.0,
+            149.0,
+            84.0
+          ],
+          "center": [
+            135.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "rightEye": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/right_0.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            12,
+            37,
+            36
+          ],
+          "projectedBox": [
+            168.0,
+            70.0,
+            195.0,
+            94.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            24.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/right_1.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            16,
+            37,
+            32
+          ],
+          "projectedBox": [
+            168.0,
+            74.0,
+            195.0,
+            90.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/right_2.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            20,
+            37,
+            29
+          ],
+          "projectedBox": [
+            168.0,
+            78.0,
+            195.0,
+            87.0
+          ],
+          "center": [
+            181.5,
+            82.5
+          ],
+          "contentSize": [
+            27.0,
+            9.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/eyes/sleepy/right_3.png",
+          "imageSize": [
+            48,
+            48
+          ],
+          "alphaBox": [
+            10,
+            22,
+            37,
+            26
+          ],
+          "projectedBox": [
+            168.0,
+            80.0,
+            195.0,
+            84.0
+          ],
+          "center": [
+            181.5,
+            82.0
+          ],
+          "contentSize": [
+            27.0,
+            4.0
+          ]
+        }
+      ],
+      "mouth": [
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sleepy/0.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            35,
+            20,
+            61,
+            27
+          ],
+          "projectedBox": [
+            145.0,
+            105.0,
+            171.0,
+            112.0
+          ],
+          "center": [
+            158.0,
+            108.5
+          ],
+          "contentSize": [
+            26.0,
+            7.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sleepy/1.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            32,
+            18,
+            64,
+            30
+          ],
+          "projectedBox": [
+            142.0,
+            103.0,
+            174.0,
+            115.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            32.0,
+            12.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sleepy/2.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            29,
+            16,
+            67,
+            32
+          ],
+          "projectedBox": [
+            139.0,
+            101.0,
+            177.0,
+            117.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            38.0,
+            16.0
+          ]
+        },
+        {
+          "path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/mouth/sleepy/3.png",
+          "imageSize": [
+            96,
+            48
+          ],
+          "alphaBox": [
+            27,
+            14,
+            69,
+            34
+          ],
+          "projectedBox": [
+            137.0,
+            99.0,
+            179.0,
+            119.0
+          ],
+          "center": [
+            158.0,
+            109.0
+          ],
+          "contentSize": [
+            42.0,
+            20.0
+          ]
+        }
+      ]
+    }
+  },
+  "artifacts": {
+    "neutral_semantic_overlay": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/qa/semantic-fit/neutral-semantic-overlay.png",
+    "semantic_fit_report": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/qa/semantic-fit/semantic-fit-report.json"
+  },
+  "manual_gate": [
+    "Open neutral-semantic-overlay.png and confirm actual feature boxes sit inside the intended face slots.",
+    "Reject the pack if automatic checks pass but the face still looks less appealing than the concept.",
+    "Do not tune firmware offsets until this source-level semantic fit passes."
+  ]
+}
