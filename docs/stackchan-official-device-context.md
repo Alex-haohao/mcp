@@ -10,7 +10,7 @@ This runbook records the official M5Stack StackChan context needed before integr
 - M5Stack Arduino image-files example: https://docs.m5stack.com/en/arduino/stackchan/pic
 - M5Stack StackChan open-source repo, reviewed at `0286f72`: https://github.com/m5stack/StackChan/tree/0286f72
 - Local writable fork submodule: `projects/StackChan`, fork URL https://github.com/Alex-haohao/StackChan
-- Current local setup branch: `codex/image-avatar` at `834b27f`, based on official `0286f72` plus ImageAvatar implementation commits.
+- Current local setup branch: `codex/image-avatar` at `4ce404a`, based on official `0286f72` plus ImageAvatar implementation and ESP-IDF build-verification commits.
 - M5Stack StackChan-BSP Arduino library, reviewed at `f7ed40e`: https://github.com/m5stack/StackChan-BSP/tree/f7ed40e
 - Current generated pack in this repo: `workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/manifest.json`
 
@@ -38,6 +38,44 @@ upstream https://github.com/m5stack/StackChan.git
 ```
 
 Use `origin` for branches and pushes. Use `upstream` only for reading official updates; its push URL should stay disabled locally.
+
+## Local ESP-IDF Environment
+
+ESP-IDF v5.5.4 is installed locally for StackChan/CoreS3 work:
+
+```text
+/Users/tianhaoxi/esp/esp-idf-v5.5.4
+```
+
+Espressif tools and Python packages are installed under the default tools path:
+
+```text
+/Users/tianhaoxi/.espressif
+```
+
+The interactive zsh entrypoint is:
+
+```bash
+get_idf
+```
+
+This alias sources:
+
+```bash
+$HOME/esp/esp-idf-v5.5.4/export.sh
+```
+
+Verified tool versions on 2026-06-30:
+
+```text
+ESP-IDF v5.5.4
+xtensa-esp-elf-gcc 14.2.0
+ninja 1.13.2
+dfu-util 0.11
+```
+
+Keep ESP-IDF opt-in through `get_idf` instead of auto-sourcing it from every
+shell. This avoids changing PATH and Python behavior for unrelated projects.
 
 ## Device Facts
 
@@ -154,6 +192,37 @@ The firmware asset helper can produce an LVGL image descriptor from:
 - `.png`, `.jpg`, `.jpeg`, `.gif`: encoded standard image data.
 
 Best practice for our core face parts remains preconverted LVGL descriptors or `.bin` assets, not runtime PNG/GIF decode for every expression update. Encoded PNGs are acceptable for early bring-up if benchmarked, but production should avoid decode overhead and frame-time variance.
+
+## Local Firmware Build Results
+
+The current fork branch has been verified with ESP-IDF v5.5.4 on 2026-06-30.
+
+Default official avatar build:
+
+```text
+stack-chan.bin size: 0x39adc0
+smallest app partition: 0x4f0000
+free: 0x155240 bytes, 27%
+```
+
+ImageAvatar build with `sdkconfig.defaults.local` overlay:
+
+```text
+stack-chan.bin size: 0x476b80
+smallest app partition: 0x4f0000
+free: 0x079480 bytes, 10%
+```
+
+Host tests:
+
+```text
+motion_math_test passed
+image_avatar_mapping_test passed
+```
+
+The ImageAvatar build fits but leaves only about 10% free in the app partition.
+Future image-pack iterations should avoid full-screen animation frames and must
+check `idf.py build` size output after every asset update.
 
 ## Current Image Pack State
 

@@ -12,7 +12,13 @@
 
 **Upstream policy:** Keep this fork easy to sync with official `m5stack/StackChan`. Prefer additive files under `firmware/main/stackchan/avatar/skins/image/`, keep official core abstractions and protocols unchanged, and make every official-file edit narrow enough to survive future `upstream/main` rebases.
 
-**Current execution status (2026-06-30):** Tasks 1 and 2 are complete. Tasks 3, 4, 5, 6, 8, and 9 were implemented in one complete pass rather than the older staged 3-expression path: the current submodule commit is `834b27f feat: add image avatar skin`, pushed to `origin/codex/image-avatar`. The implementation includes all six emotions, four eye frames per side, four mouth frames, Kconfig selection, firmware-local docs, and complete generated LVGL descriptors. Host tests pass, `git diff --check` passes, and a temporary fake-LVGL syntax/preprocessor check confirms all 73 generated assets are referenced. Full `idf.py build`, flash, and hardware smoke tests remain pending because `idf.py` is not installed or sourced in this environment.
+**Current execution status (2026-06-30):** Tasks 1 and 2 are complete. Tasks 3, 4, 5, 6, 8, and 9 were implemented in one complete pass rather than the older staged 3-expression path: the baseline implementation commit is `834b27f feat: add image avatar skin`, pushed to `origin/codex/image-avatar`. The implementation includes all six emotions, four eye frames per side, four mouth frames, Kconfig selection, firmware-local docs, and complete generated LVGL descriptors. Host tests pass, `git diff --check` passes, and a temporary fake-LVGL syntax/preprocessor check confirms all 73 generated assets are referenced. ESP-IDF v5.5.4 is now installed locally, default firmware builds successfully, and ImageAvatar firmware builds successfully with a git-ignored `sdkconfig.defaults.local` overlay. The remaining validation gap is flashing a physical StackChan and doing the hardware smoke checks.
+
+**Build verification added after ESP-IDF setup (2026-06-30):**
+- Latest submodule commit after verification: `4ce404a chore: verify esp-idf image avatar build`.
+- DefaultAvatar build: `stack-chan.bin` size `0x39adc0`, app partition free `0x155240` bytes (27%).
+- ImageAvatar build: `stack-chan.bin` size `0x476b80`, app partition free `0x079480` bytes (10%).
+- CMake now keeps `firmware/main/stackchan/avatar/skins/image/` out of the default build unless `CONFIG_STACKCHAN_AVATAR_SKIN_IMAGE=y`, so the official default avatar path does not carry unused image descriptors.
 
 ---
 
