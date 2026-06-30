@@ -13,6 +13,14 @@
       "kind": "submodule",
       "git": "https://github.com/moeru-ai/airi.git",
       "description": "AIRI multi-platform virtual character project. Stage Pocket is used for iOS/TestFlight builds."
+    },
+    {
+      "name": "stackchan",
+      "path": "projects/StackChan",
+      "kind": "submodule",
+      "git": "https://github.com/Alex-haohao/StackChan.git",
+      "upstream": "https://github.com/m5stack/StackChan.git",
+      "description": "M5Stack StackChan fork used for official ESP-IDF firmware, mobile app, server, and remote-control work."
     }
   ]
 }

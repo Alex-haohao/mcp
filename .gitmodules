@@ -1,3 +1,6 @@
 [submodule "projects/airi"]
 	path = projects/airi
 	url = https://github.com/moeru-ai/airi.git
+[submodule "projects/StackChan"]
+	path = projects/StackChan
+	url = https://github.com/Alex-haohao/StackChan.git

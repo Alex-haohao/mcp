@@ -9,10 +9,35 @@ This runbook records the official M5Stack StackChan context needed before integr
 - M5Stack product documentation: https://docs.m5stack.com/en/StackChan
 - M5Stack Arduino image-files example: https://docs.m5stack.com/en/arduino/stackchan/pic
 - M5Stack StackChan open-source repo, reviewed at `0286f72`: https://github.com/m5stack/StackChan/tree/0286f72
+- Local writable fork submodule: `projects/StackChan`, fork URL https://github.com/Alex-haohao/StackChan
+- Current local setup branch: `codex/image-avatar` at `2968fdd`, based on official `0286f72` plus a hygiene ignore for host-test build output.
 - M5Stack StackChan-BSP Arduino library, reviewed at `f7ed40e`: https://github.com/m5stack/StackChan-BSP/tree/f7ed40e
 - Current generated pack in this repo: `workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/final/manifest.json`
 
 The official StackChan repo says open-source updates can lag released factory firmware and mobile app. Treat source analysis as the best implementation map, but verify behavior on the device before assuming it exactly matches the current production firmware.
+
+## Workspace Location
+
+StackChan is prepared inside the current AI workspace as a fork-backed git submodule:
+
+```text
+/Users/tianhaoxi/project/mcp/projects/StackChan
+```
+
+Tracked submodule remote:
+
+```text
+https://github.com/Alex-haohao/StackChan.git
+```
+
+Local working remotes should be:
+
+```text
+origin   https://github.com/Alex-haohao/StackChan.git
+upstream https://github.com/m5stack/StackChan.git
+```
+
+Use `origin` for branches and pushes. Use `upstream` only for reading official updates; its push URL should stay disabled locally.
 
 ## Device Facts
 
@@ -247,21 +272,21 @@ Upgrade path only after smoke testing:
 
 ## Immediate Next Steps
 
-1. Prepare the official firmware checkout.
+1. Confirm the official firmware submodule and branch.
 
 ```bash
-mkdir -p /Users/tianhaoxi/project
-git clone https://github.com/m5stack/StackChan.git /Users/tianhaoxi/project/StackChan
-cd /Users/tianhaoxi/project/StackChan
-git checkout -b codex/image-avatar
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
+git status
+git remote -v
+git checkout codex/image-avatar
 ```
 
-If the repo already exists, fetch and fast-forward `main` first, then create or reset the feature branch intentionally.
+Expected: `origin` points to `Alex-haohao/StackChan`, `upstream` points to `m5stack/StackChan`, and the work branch is `codex/image-avatar`.
 
 2. Fetch official firmware dependencies and run baseline host tests.
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 python3 ./fetch_repos.py
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests
@@ -324,9 +349,23 @@ Minimum acceptance:
 
 Update:
 
+- `docs/stackchan-official-device-context.md`;
 - `docs/stackchan-image-pack-generation-skill.md`;
 - `docs/superpowers/plans/2026-06-30-stackchan-image-avatar.md`;
 - `skills/stackchan-image-pack/SKILL.md` if asset dimensions, frame counts, or conversion rules change.
+
+## Documentation Maintenance Rule
+
+Keep StackChan documentation in the root workspace current whenever any of these change:
+
+- official firmware source pin or upstream branch;
+- local fork/submodule branch strategy;
+- image-pack frame counts, dimensions, anchors, or asset conversion path;
+- ESP-IDF build, flash, or test commands;
+- findings from real StackChan device smoke tests;
+- MCP/server/app integration assumptions.
+
+The root docs explain the why and workflow; the `projects/StackChan` submodule contains the implementation. Do not bury durable process knowledge only inside ad hoc terminal history or submodule commits.
 
 ## Current Decision
 

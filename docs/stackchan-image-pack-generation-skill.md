@@ -161,6 +161,18 @@ stackchan-image-pack/
 10. Generate and inspect contact sheet plus preview GIFs.
 11. Convert final PNGs to LVGL descriptors only after the pack is accepted.
 
+Firmware integration now lives in the workspace StackChan fork submodule:
+
+```text
+/Users/tianhaoxi/project/mcp/projects/StackChan
+```
+
+Keep image-pack documentation in this root workspace aligned with firmware
+findings from that submodule. If device smoke tests change the recommended
+frame count, anchor policy, LVGL conversion format, or asset packaging path,
+update this document and `skills/stackchan-image-pack/SKILL.md` in the same
+change.
+
 ## Commands
 
 Prepare a run:

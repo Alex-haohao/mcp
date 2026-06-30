@@ -4,7 +4,7 @@
 
 **Goal:** Add a custom image-based StackChan avatar skin to the official ESP-IDF firmware while preserving the official AI Agent, mobile app control, OTA, WebSocket/BLE avatar protocol, motion, speech, decorators, and default avatar.
 
-**Required context:** Read `docs/stackchan-official-device-context.md` before executing this plan. It records the current official M5Stack product documentation, official firmware source entry points, assets partition behavior, current generated pack status, and the Arduino-vs-ESP-IDF boundary.
+**Required context:** Read `docs/stackchan-official-device-context.md` before executing this plan. It records the current official M5Stack product documentation, fork-backed `projects/StackChan` submodule, official firmware source entry points, assets partition behavior, current generated pack status, and the Arduino-vs-ESP-IDF boundary.
 
 **Architecture:** Add a new `ImageAvatar` skin beside `DefaultAvatar`; do not replace or delete the official skin. Keep the semantic control layer unchanged (`Emotion`, `leftEye`, `rightEye`, `mouth`, modifiers, decorators) and map those values into image/sprite frame selection. Put all pure mapping logic in host-testable files before integrating LVGL.
 
@@ -14,12 +14,12 @@
 
 ## Scope Boundary
 
-The implementation target is a checkout of `https://github.com/m5stack/StackChan`, not this MCP workspace. This plan is stored in `/Users/tianhaoxi/project/mcp` only as execution guidance.
+The implementation target is the fork-backed StackChan submodule in this MCP workspace. The submodule tracks `https://github.com/Alex-haohao/StackChan.git` as `origin` and should keep `https://github.com/m5stack/StackChan.git` as read-only `upstream`.
 
 Use this local checkout path when executing:
 
 ```bash
-/Users/tianhaoxi/project/StackChan
+/Users/tianhaoxi/project/mcp/projects/StackChan
 ```
 
 Branch name:
@@ -148,39 +148,39 @@ firmware/main/stackchan/avatar/skins/default/default.h
 firmware/main/stackchan/avatar/skins/default/default.cpp
 ```
 
-## Task 1: Prepare Official Firmware Checkout
+## Task 1: Prepare Official Firmware Submodule
 
 **Files:**
 - No source files changed.
 
-- [ ] **Step 1: Clone or update the official repo**
+- [ ] **Step 1: Verify the submodule checkout and remotes**
 
 ```bash
-mkdir -p /Users/tianhaoxi/project
-if [ ! -d /Users/tianhaoxi/project/StackChan/.git ]; then
-  git clone https://github.com/m5stack/StackChan.git /Users/tianhaoxi/project/StackChan
-fi
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp
+git submodule update --init projects/StackChan
+git -C projects/StackChan remote get-url upstream >/dev/null 2>&1 || \
+  git -C projects/StackChan remote add upstream https://github.com/m5stack/StackChan.git
+git -C projects/StackChan remote set-url --push upstream DISABLED
+git -C projects/StackChan remote -v
+git -C projects/StackChan status --short
+```
+
+Expected: `origin` points to `Alex-haohao/StackChan`; `upstream` points to `m5stack/StackChan` with push disabled; `git status --short` is empty.
+
+- [ ] **Step 2: Checkout the feature branch**
+
+```bash
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git fetch origin
-git checkout main
-git pull --ff-only origin main
+git checkout codex/image-avatar
 ```
 
-Expected: the checkout is on `main` with no local source changes.
-
-- [ ] **Step 2: Create the feature branch**
-
-```bash
-cd /Users/tianhaoxi/project/StackChan
-git checkout -b codex/image-avatar
-```
-
-Expected: branch is `codex/image-avatar`.
+Expected: branch is `codex/image-avatar` tracking `origin/codex/image-avatar`.
 
 - [ ] **Step 3: Fetch firmware dependencies**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 python3 ./fetch_repos.py
 ```
 
@@ -189,7 +189,7 @@ Expected: dependencies are fetched under `firmware/`; skipped patches are accept
 - [ ] **Step 4: Run existing host tests**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests
 ctest --test-dir build-host-tests --output-on-failure
@@ -300,7 +300,7 @@ add_test(NAME image_avatar_mapping_test COMMAND $<TARGET_FILE:image_avatar_mappi
 - [ ] **Step 3: Run the test and verify it fails before implementation**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests
 ```
@@ -388,7 +388,7 @@ const char* emotionAssetName(Emotion emotion)
 - [ ] **Step 6: Run host tests**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests
 ctest --test-dir build-host-tests --output-on-failure
@@ -399,7 +399,7 @@ Expected: `motion_math_test` and `image_avatar_mapping_test` pass.
 - [ ] **Step 7: Commit**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/main/stackchan/avatar/skins/image/image_avatar_mapping.h \
         firmware/main/stackchan/avatar/skins/image/image_avatar_mapping.cpp \
         firmware/tests/image_avatar_mapping_test.cpp \
@@ -648,7 +648,7 @@ const ImageAvatarPack kMyStackChanPack = {
 - [ ] **Step 6: Build firmware to catch generated asset symbol errors**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py build
 ```
 
@@ -657,7 +657,7 @@ Expected: build may fail if image conversion produced different symbol names. Re
 - [ ] **Step 7: Commit**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/main/stackchan/avatar/skins/image/image_avatar_pack.h \
         firmware/main/stackchan/avatar/skins/image/image_avatar_pack.cpp \
         firmware/main/stackchan/avatar/skins/image/packs
@@ -801,7 +801,7 @@ void ImageSpriteFeature::refreshPosition()
 - [ ] **Step 3: Build**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py build
 ```
 
@@ -810,7 +810,7 @@ Expected: build succeeds or fails only on exact wrapper method names. If a `smoo
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/main/stackchan/avatar/skins/image/image_sprite_feature.h \
         firmware/main/stackchan/avatar/skins/image/image_sprite_feature.cpp
 git commit -m "feat: add image sprite avatar feature"
@@ -939,7 +939,7 @@ void ImageAvatar::applyExpression(const ImageExpressionSet& expression)
 - [ ] **Step 3: Build**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py build
 ```
 
@@ -948,7 +948,7 @@ Expected: build succeeds. If `DefaultSpeechBubble` coupling becomes a compile pr
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/main/stackchan/avatar/skins/image/image_avatar.h \
         firmware/main/stackchan/avatar/skins/image/image_avatar.cpp
 git commit -m "feat: add image avatar skin"
@@ -1009,7 +1009,7 @@ With:
 - [ ] **Step 4: Build with default avatar**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py build
 ```
 
@@ -1020,7 +1020,7 @@ Expected: build succeeds with `CONFIG_STACKCHAN_USE_IMAGE_AVATAR` disabled.
 Use menuconfig or a local sdkconfig overlay:
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 printf 'CONFIG_STACKCHAN_USE_IMAGE_AVATAR=y\n' > sdkconfig.defaults.local
 idf.py fullclean
 idf.py build
@@ -1031,7 +1031,7 @@ Expected: build succeeds with the image skin enabled.
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/main/Kconfig.projbuild firmware/main/apps/app_avatar/app_avatar.cpp
 git commit -m "feat: wire image avatar behind config"
 ```
@@ -1044,7 +1044,7 @@ git commit -m "feat: wire image avatar behind config"
 - [ ] **Step 1: Run host tests**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests
 ctest --test-dir build-host-tests --output-on-failure
@@ -1055,7 +1055,7 @@ Expected: all host tests pass.
 - [ ] **Step 2: Run firmware build**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py build
 ```
 
@@ -1064,7 +1064,7 @@ Expected: build succeeds.
 - [ ] **Step 3: Flash and monitor**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 idf.py flash monitor
 ```
 
@@ -1138,7 +1138,7 @@ Extend `kExpressions` in `my_stackchan_pack.cpp` with:
 - [ ] **Step 3: Re-run tests and build**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 cmake --build build-host-tests
 ctest --test-dir build-host-tests --output-on-failure
 idf.py build
@@ -1149,7 +1149,7 @@ Expected: tests and build pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/main/stackchan/avatar/skins/image/packs
 git commit -m "feat: add full image avatar expression pack"
 ```
@@ -1208,7 +1208,7 @@ The default avatar remains available when `CONFIG_STACKCHAN_USE_IMAGE_AVATAR=n`.
 - [ ] **Step 2: Run final verification**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan/firmware
+cd /Users/tianhaoxi/project/mcp/projects/StackChan/firmware
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests
 ctest --test-dir build-host-tests --output-on-failure
@@ -1220,7 +1220,7 @@ Expected: all checks pass.
 - [ ] **Step 3: Review diff for dead code**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git diff --stat main...HEAD
 git diff main...HEAD -- firmware/main/stackchan/avatar/skins/image firmware/tests firmware/main/apps/app_avatar/app_avatar.cpp firmware/main/Kconfig.projbuild firmware/docs/image-avatar.md
 ```
@@ -1238,7 +1238,7 @@ No broad refactor outside avatar skin wiring.
 - [ ] **Step 4: Commit docs**
 
 ```bash
-cd /Users/tianhaoxi/project/StackChan
+cd /Users/tianhaoxi/project/mcp/projects/StackChan
 git add firmware/docs/image-avatar.md
 git commit -m "docs: document image avatar asset contract"
 ```

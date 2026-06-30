@@ -17,6 +17,8 @@ service at the root and external/upstream projects under `projects/`.
 - `workspace/projects.json`: workspace project inventory.
 - `projects/airi/`: AIRI upstream git submodule. Treat it as an independent
   upstream project inside this workspace.
+- `projects/StackChan/`: StackChan fork submodule for official ESP-IDF firmware,
+  mobile app, server, and remote-control work.
 
 ## Agent Orientation
 
@@ -25,6 +27,9 @@ service at the root and external/upstream projects under `projects/`.
 - For AIRI work, stay inside `projects/airi/` unless changing workspace scripts
   or documentation. `projects/airi/apps/stage-pocket` is the iOS/Capacitor app,
   and `projects/airi/apps/server` is AIRI's optional backend.
+- For StackChan firmware/app/server work, stay inside `projects/StackChan/`.
+  Root-level StackChan docs, image-pack assets, and workflow skills stay in this
+  workspace and should be kept aligned with submodule changes.
 - Do not commit secrets. Local credentials live in `.env`, which is ignored by
   Git.
 - Keep root scripts and docs small and task-focused. Remove stale instructions
@@ -34,11 +39,14 @@ Current workspace projects:
 
 - `xiaozhi-mcp`: this root Python service.
 - `airi`: AIRI upstream submodule at `projects/airi`.
+- `stackchan`: M5Stack StackChan fork submodule at `projects/StackChan`.
 
 Workspace docs:
 
 - [docs/monorepo-workspace.md](docs/monorepo-workspace.md)
 - [docs/airi-testflight-runbook.md](docs/airi-testflight-runbook.md)
+- [docs/stackchan-official-device-context.md](docs/stackchan-official-device-context.md)
+- [docs/stackchan-image-pack-generation-skill.md](docs/stackchan-image-pack-generation-skill.md)
 
 Cloud-hosted MCP bridge for StackChan/XiaoZhi. The bridge connects to `MCP_ENDPOINT`, starts configured local or remote MCP servers, and pipes MCP traffic between XiaoZhi and those servers.
 

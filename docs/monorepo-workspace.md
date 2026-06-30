@@ -11,7 +11,8 @@ This repository is now the workspace root for independent AI projects.
 ├── docs/                       # workspace and service docs
 ├── workspace/projects.json     # project inventory
 └── projects/
-    └── airi/                   # AIRI git submodule
+    ├── airi/                   # AIRI git submodule
+    └── StackChan/              # StackChan fork git submodule
 ```
 
 The current MCP service intentionally remains at the repository root to avoid breaking the already deployed `/opt/xiaozhi-mcp` service and its deployment script. New external projects should go under `projects/<name>`.
@@ -20,6 +21,8 @@ The current MCP service intentionally remains at the repository root to avoid br
 
 - Root repository: owns workspace docs, service deployment scripts, and the `xiaozhi-mcp` bridge.
 - `projects/airi`: owns AIRI source code and upstream history as a Git submodule.
+- `projects/StackChan`: owns the StackChan fork checkout used for official
+  ESP-IDF firmware, mobile app, server, and remote-control changes.
 
 Using submodules keeps large upstream projects independent while still allowing this root repository to pin known-good revisions.
 
@@ -55,12 +58,37 @@ git -C projects/airi pull --ff-only
 git add projects/airi
 ```
 
+Prepare or inspect the StackChan firmware workspace:
+
+```bash
+git submodule update --init projects/StackChan
+git -C projects/StackChan remote -v
+git -C projects/StackChan branch -vv
+```
+
+The tracked submodule URL is the writable fork:
+
+```text
+https://github.com/Alex-haohao/StackChan.git
+```
+
+Keep the official repository as a local `upstream` remote when working in the
+submodule:
+
+```bash
+git -C projects/StackChan remote get-url upstream >/dev/null 2>&1 || \
+  git -C projects/StackChan remote add upstream https://github.com/m5stack/StackChan.git
+git -C projects/StackChan remote set-url --push upstream DISABLED
+git -C projects/StackChan fetch upstream
+```
+
 Check workspace state:
 
 ```bash
 git status
 git submodule status --recursive
 git -C projects/airi status
+git -C projects/StackChan status
 ```
 
 ## Adding Another AI Project
@@ -94,3 +122,22 @@ python scripts/airi_ios_testflight.py \
   --skip-web-build \
   --unsigned-archive
 ```
+
+For StackChan, the minimum smoke path before firmware feature work is:
+
+```bash
+cd projects/StackChan/firmware
+python3 ./fetch_repos.py
+cmake -S tests -B build-host-tests
+cmake --build build-host-tests
+ctest --test-dir build-host-tests --output-on-failure
+```
+
+StackChan documentation is part of the deliverable. When changing StackChan
+firmware, assets, or workflow assumptions, update the relevant root docs in the
+same branch:
+
+- `docs/stackchan-official-device-context.md`
+- `docs/stackchan-image-pack-generation-skill.md`
+- `docs/superpowers/plans/2026-06-30-stackchan-image-avatar.md`
+- `skills/stackchan-image-pack/SKILL.md` if generation rules change
