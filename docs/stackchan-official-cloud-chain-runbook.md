@@ -278,7 +278,17 @@ m5stack:
 
 `registrationUrl` and `registrationToken` are still placeholders unless we add
 a real account-registration path. Existing M5Stack/forum accounts should use the
-login path above.
+login path above. For new accounts, use the official registration page:
+
+```text
+https://community.m5stack.com/register
+```
+
+The self-hosted server intentionally returns a clear validation message when app
+registration is attempted without `registrationUrl` and `registrationToken`
+configured. This avoids the previous generic `Business Validation Failed`
+response and keeps registration credentials out of the self-hosted stack until a
+real M5Stack registration integration is available.
 
 Failure mode seen on 2026-07-01: if the `m5stack` block is missing, `/api.json`
 and `/stackChan/apps` still look healthy, but login returns a confusing
