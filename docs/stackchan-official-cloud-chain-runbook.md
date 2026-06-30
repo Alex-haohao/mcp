@@ -109,6 +109,66 @@ quoting issues:
 The server private key stays on the server. The app only receives values needed
 by the official client protocol.
 
+## Firmware Secret Alignment
+
+Official firmware plus the official App works because the distributed binary
+pair is built as one matched production chain: the App, server, firmware server
+URL, and BLE/RSA handshake behavior all agree. The open-source
+`firmware/main/hal/utils/secret_logic/secret_logic.cpp` contains weak
+placeholder defaults such as `hi-stack-chan`; a self-built firmware that uses
+those defaults will not match our self-hosted App/server keys.
+
+For this workspace, keep the upstream-friendly pattern:
+
+- Track only a small firmware override file and the generator script.
+- Store real PEM material and host URL in ignored local files.
+- Regenerate local firmware config whenever server keys or host URL change.
+
+Generate the ignored firmware config:
+
+```bash
+scripts/stackchan_generate_firmware_secrets.py \
+  --stackchan-dir projects/StackChan \
+  --server-url http://162.211.181.150
+```
+
+This writes:
+
+```text
+projects/StackChan/firmware/main/hal/local_secret_config.h
+projects/StackChan/firmware/sdkconfig.defaults.local
+projects/StackChan/firmware/sdkconfig
+```
+
+All three files must stay ignored. The tracked firmware override is
+`firmware/main/hal/local_secret_logic.cpp`; when `local_secret_config.h` is
+present, it replaces the weak defaults with:
+
+- `get_server_url()` returning the local server URL;
+- `generate_auth_token()` using RSA-OAEP/SHA256 and the local server public key;
+- `generate_handshake_token()` using RSA-OAEP/SHA256 and the local
+  `stackchan_blue_public.pem` key.
+
+The mobile App add-device flow writes a BLE `handshake` command and expects a
+`notifyState` response whose `data.state` is base64 RSA-OAEP/SHA256 ciphertext.
+After decryption, the App takes the first 12 characters as the device MAC. If
+the firmware returns the placeholder string, the App shows
+`Failed to process device data` before any backend bind request is sent.
+
+Flash after regeneration:
+
+```bash
+cd projects/StackChan/firmware
+source /Users/tianhaoxi/esp/esp-idf-v5.5.4/export.sh
+idf.py build
+idf.py -p /dev/cu.usbmodem101 flash
+```
+
+Device-side BLE advertising does not start at boot. Enter the setup flow until
+the screen says `Look for me in the app to start setup.`; that state calls
+`startAppConfigServer()` and advertises service UUID
+`e2e5e5ff-1234-5678-1234-56789abcdef0`.
+
 ## iOS Device Signing
 
 Keep the official iOS signing defaults in source control and use a local
@@ -432,6 +492,9 @@ Latest smoke result:
 - `/stackChan/v2/user/login` with fake credentials: HTTP 200 with
   `code=300` and `[[error:invalid-login-credentials]]`, expected because this
   proves the request reached the configured M5Stack login endpoint.
+- Firmware/App add-device BLE handshake on 2026-07-01: passed. The self-built
+  firmware returned `notifyState` type `4`, and local decryption with
+  `stackchan_blue_private.pem` produced `441BF6DF62F8|<timestamp>`.
 
 Local environment state:
 
@@ -450,6 +513,7 @@ python3 -m py_compile \
   scripts/stackchan_cloud_preflight.py \
   scripts/stackchan_configure_nginx.py \
   scripts/stackchan_deploy_compose.py \
+  scripts/stackchan_generate_firmware_secrets.py \
   scripts/stackchan_prepare_local_secrets.py
 
 git diff --check
@@ -527,12 +591,14 @@ curl -sS -o /tmp/stackchan-ws.txt -w '%{http_code}' \
 2. Use the generated local-only RSA dart-define values from
    `workspace/stackchan-secrets/server/app-dart-defines.env`; do not copy them
    into source files.
-3. Verify the phone app can load the server, login/bind as expected, and observe
+3. On the device, enter `Look for me in the app to start setup.` before adding
+   the device. BLE advertising only starts in that setup state.
+4. Verify the phone app can load the server, login/bind as expected, and observe
    authenticated WebSocket status.
-4. Add a domain and TLS certificate before treating the staging server as
+5. Add a domain and TLS certificate before treating the staging server as
    production. After TLS is enabled, switch App builds to
    `STACKCHAN_SERVER_TLS=true` and verify `wss://`.
-5. Only after app/server/device auth is green, add custom API or MCP integration
+6. Only after app/server/device auth is green, add custom API or MCP integration
    behind the server path. Keep firmware reflashing out of this phase unless a
    device-local capability truly requires firmware changes.
 
