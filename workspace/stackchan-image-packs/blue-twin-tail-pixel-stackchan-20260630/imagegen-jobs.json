@@ -1,0 +1,646 @@
+{
+  "jobs": [
+    {
+      "id": "neutral-style-1",
+      "kind": "style-candidate",
+      "status": "pending",
+      "depends_on": [],
+      "prompt_file": "prompts/style-candidates/neutral-style-1.md",
+      "input_images": [
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral-style-1.png"
+    },
+    {
+      "id": "neutral-style-2",
+      "kind": "style-candidate",
+      "status": "pending",
+      "depends_on": [],
+      "prompt_file": "prompts/style-candidates/neutral-style-2.md",
+      "input_images": [
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral-style-2.png"
+    },
+    {
+      "id": "neutral-style-3",
+      "kind": "style-candidate",
+      "status": "pending",
+      "depends_on": [],
+      "prompt_file": "prompts/style-candidates/neutral-style-3.md",
+      "input_images": [
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral-style-3.png"
+    },
+    {
+      "id": "concept-neutral",
+      "kind": "emotion-concept",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/neutral.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral.png"
+    },
+    {
+      "id": "concept-happy",
+      "kind": "emotion-concept",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/happy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/happy.png"
+    },
+    {
+      "id": "concept-angry",
+      "kind": "emotion-concept",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/angry.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/angry.png"
+    },
+    {
+      "id": "concept-sad",
+      "kind": "emotion-concept",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/sad.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/sad.png"
+    },
+    {
+      "id": "concept-doubt",
+      "kind": "emotion-concept",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/doubt.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/doubt.png"
+    },
+    {
+      "id": "concept-sleepy",
+      "kind": "emotion-concept",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/sleepy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/concepts/sleepy.png"
+    },
+    {
+      "id": "body-base",
+      "kind": "body",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/body-base.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/body-base.png"
+    },
+    {
+      "id": "eyes-neutral-left",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-neutral-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-neutral-left.png"
+    },
+    {
+      "id": "eyes-neutral-right",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-neutral-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-neutral-right.png"
+    },
+    {
+      "id": "mouth-neutral",
+      "kind": "mouth-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-neutral.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-neutral.png"
+    },
+    {
+      "id": "eyes-happy-left",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-happy-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-happy-left.png"
+    },
+    {
+      "id": "eyes-happy-right",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-happy-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-happy-right.png"
+    },
+    {
+      "id": "mouth-happy",
+      "kind": "mouth-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-happy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-happy.png"
+    },
+    {
+      "id": "eyes-angry-left",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-angry-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-angry-left.png"
+    },
+    {
+      "id": "eyes-angry-right",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-angry-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-angry-right.png"
+    },
+    {
+      "id": "mouth-angry",
+      "kind": "mouth-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-angry.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-angry.png"
+    },
+    {
+      "id": "eyes-sad-left",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sad-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sad-left.png"
+    },
+    {
+      "id": "eyes-sad-right",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sad-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sad-right.png"
+    },
+    {
+      "id": "mouth-sad",
+      "kind": "mouth-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-sad.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-sad.png"
+    },
+    {
+      "id": "eyes-doubt-left",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-doubt-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-doubt-left.png"
+    },
+    {
+      "id": "eyes-doubt-right",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-doubt-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-doubt-right.png"
+    },
+    {
+      "id": "mouth-doubt",
+      "kind": "mouth-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-doubt.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-doubt.png"
+    },
+    {
+      "id": "eyes-sleepy-left",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sleepy-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sleepy-left.png"
+    },
+    {
+      "id": "eyes-sleepy-right",
+      "kind": "eye-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sleepy-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sleepy-right.png"
+    },
+    {
+      "id": "mouth-sleepy",
+      "kind": "mouth-strip",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-sleepy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-sleepy.png"
+    },
+    {
+      "id": "decorator-heart",
+      "kind": "decorator",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/heart.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/decorators/heart.png"
+    },
+    {
+      "id": "decorator-sweat",
+      "kind": "decorator",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/sweat.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/decorators/sweat.png"
+    },
+    {
+      "id": "decorator-anger",
+      "kind": "decorator",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/anger.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/decorators/anger.png"
+    },
+    {
+      "id": "decorator-tear",
+      "kind": "decorator",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/tear.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/decorators/tear.png"
+    },
+    {
+      "id": "decorator-dizzy",
+      "kind": "decorator",
+      "status": "pending",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/dizzy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical style reference"
+        },
+        {
+          "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+          "role": "user reference image"
+        }
+      ],
+      "output_path": "decoded/decorators/dizzy.png"
+    }
+  ]
+}

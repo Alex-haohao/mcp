@@ -1,0 +1,15 @@
+{
+  "pack_id": "blue-twin-tail-pixel-stackchan",
+  "display_name": "blue-twin-tail-pixel-stackchan",
+  "description": "Pixel-art StackChan avatar pack based on the blue twin-tail chibi reference",
+  "style_preset": "pixel",
+  "style_notes": "Strictly follow hatch-pet style discipline: pixel-art-adjacent mascot, compact silhouette, limited blue black palette, chunky outline, flat cel shading, visible stepped edges, readable at 320x240, same identity across every part",
+  "chroma_key": "#FF00FF",
+  "references": [
+    {
+      "path": "/Users/tianhaoxi/Downloads/IMG_4635.PNG",
+      "role": "user reference image"
+    }
+  ],
+  "created_at": "2026-06-30T05:59:14.603826+00:00"
+}

@@ -1,0 +1,15 @@
+{
+  "pack_id": "blue-maid-idol-stackchan",
+  "display_name": "blue-maid-idol-stackchan",
+  "description": "A blue-haired twin-tail chibi idol maid StackChan avatar based on IMG_4648, expressive and readable on a 320x240 robot screen",
+  "style_preset": "chibi-anime-idol-maid",
+  "style_notes": "blue twin tails, dark blue maid dress, white apron and bow, handheld black microphone, compact chibi proportions, clean readable face, keep identity consistent",
+  "chroma_key": "#FF00FF",
+  "references": [
+    {
+      "path": "/Users/tianhaoxi/Downloads/IMG_4648.PNG",
+      "role": "user reference image"
+    }
+  ],
+  "created_at": "2026-06-30T05:38:19.056424+00:00"
+}

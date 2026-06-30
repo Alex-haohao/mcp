@@ -1,0 +1,32 @@
+{
+  "pack_id": "img4635-hatch-pet-stackchan",
+  "display_name": "IMG4635 Hatch Pet StackChan",
+  "description": "A cute blue twin-tail idol StackChan avatar pack based on the provided reference image",
+  "style_preset": "pixel",
+  "style_notes": "strictly preserve the blue twin-tail hair, black-and-blue bangs, bright blue eyes, soft blush, black oversized sleeves, tiny ribbon, and chibi idol personality; make it hatch-pet-like, cute, polished, readable on a 320x240 robot display",
+  "style_contract": "StackChan-safe sprite: compact front-facing robot mascot, readable on a 320x240 device display, simple face language, stable palette/materials, clear silhouette, crisp opaque edges, polished appeal, and clean chroma-key extraction. Style `pixel`: Pixel-art-adjacent hatch-pet style with a chunky compact silhouette, simple dark outline, limited palette, flat cel shading, visible stepped edges, and no painterly or photoreal texture. User style notes: strictly preserve the blue twin-tail hair, black-and-blue bangs, bright blue eyes, soft blush, black oversized sleeves, tiny ribbon, and chibi idol personality; make it hatch-pet-like, cute, polished, readable on a 320x240 robot display.",
+  "chroma_key": {
+    "hex": "#00FF00",
+    "rgb": [
+      0,
+      255,
+      0
+    ],
+    "name": "green",
+    "selection": "auto",
+    "score": 206.8
+  },
+  "references": [
+    {
+      "path": "references/input/reference-01.png",
+      "role": "user reference image"
+    }
+  ],
+  "primary_generation_skill": "$imagegen",
+  "hatch_pet_alignment": {
+    "upstream": "openai/skills hatch-pet",
+    "workflow": "canonical identity, layout-guide-grounded strips, concise sprite-production prompts, deterministic finalization, contact-sheet QA",
+    "visual_default": "pixel-art-adjacent hatch-pet sprite style"
+  },
+  "created_at": "2026-06-30T07:03:52.765623+00:00"
+}

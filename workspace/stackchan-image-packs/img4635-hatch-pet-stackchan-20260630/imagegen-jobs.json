@@ -1,0 +1,1014 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-06-30T07:03:52.766031+00:00",
+  "run_dir": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630",
+  "primary_generation_skill": "$imagegen",
+  "jobs": [
+    {
+      "id": "neutral-style-1",
+      "kind": "style-candidate",
+      "status": "complete",
+      "depends_on": [],
+      "prompt_file": "prompts/style-candidates/neutral-style-1.md",
+      "retry_prompt_file": "prompts/retries/neutral-style-1.md",
+      "input_images": [
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral-style-1.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0f8367242ae83b64016a436aed56088199bf131a2d3c4e1a77.png",
+      "completed_at": "2026-06-30T07:09:12.242967+00:00"
+    },
+    {
+      "id": "neutral-style-2",
+      "kind": "style-candidate",
+      "status": "complete",
+      "depends_on": [],
+      "prompt_file": "prompts/style-candidates/neutral-style-2.md",
+      "retry_prompt_file": "prompts/retries/neutral-style-2.md",
+      "input_images": [
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral-style-2.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_05d087afad6c3838016a436ba27098819ba4ad4f7f79c0288d.png",
+      "completed_at": "2026-06-30T07:13:15.714580+00:00"
+    },
+    {
+      "id": "neutral-style-3",
+      "kind": "style-candidate",
+      "status": "complete",
+      "depends_on": [],
+      "prompt_file": "prompts/style-candidates/neutral-style-3.md",
+      "retry_prompt_file": "prompts/retries/neutral-style-3.md",
+      "input_images": [
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral-style-3.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0d29e30dd18dcab6016a436bfe88e48198b6351c802495bfdc.png",
+      "completed_at": "2026-06-30T07:12:10.278615+00:00"
+    },
+    {
+      "id": "canonical-style",
+      "kind": "manual-selection",
+      "status": "complete",
+      "depends_on": [
+        "neutral-style-1",
+        "neutral-style-2",
+        "neutral-style-3"
+      ],
+      "prompt_file": "",
+      "retry_prompt_file": "",
+      "input_images": [
+        {
+          "path": "decoded/concepts/neutral-style-1.png",
+          "role": "style candidate 1"
+        },
+        {
+          "path": "decoded/concepts/neutral-style-2.png",
+          "role": "style candidate 2"
+        },
+        {
+          "path": "decoded/concepts/neutral-style-3.png",
+          "role": "style candidate 3"
+        }
+      ],
+      "output_path": "references/canonical-style.png",
+      "generation_skill": "manual",
+      "requires_grounded_generation": false,
+      "allow_prompt_only_generation": false,
+      "selection_policy": "choose the most appealing hatch-pet-like pixel/sprite candidate with strongest identity consistency and device readability",
+      "source_job_id": "neutral-style-2",
+      "source_path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/decoded/concepts/neutral-style-2.png",
+      "completed_at": "2026-06-30T07:13:15.714580+00:00"
+    },
+    {
+      "id": "concept-neutral",
+      "kind": "emotion-concept",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/neutral.md",
+      "retry_prompt_file": "prompts/retries/concept-neutral.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/neutral.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/project/mcp/workspace/stackchan-image-packs/img4635-hatch-pet-stackchan-20260630/references/canonical-style.png",
+      "completed_at": "2026-06-30T07:13:50.733349+00:00"
+    },
+    {
+      "id": "concept-happy",
+      "kind": "emotion-concept",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/happy.md",
+      "retry_prompt_file": "prompts/retries/concept-happy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/happy.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0ee022653b1e0436016a436cb5b060819992b4d523c12bebb5.png",
+      "completed_at": "2026-06-30T07:15:09.997902+00:00"
+    },
+    {
+      "id": "concept-angry",
+      "kind": "emotion-concept",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/angry.md",
+      "retry_prompt_file": "prompts/retries/concept-angry.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/angry.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_02209d18b123f1d7016a436d0591dc8198881fd057b20f5092.png",
+      "completed_at": "2026-06-30T07:16:25.326764+00:00"
+    },
+    {
+      "id": "concept-sad",
+      "kind": "emotion-concept",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/sad.md",
+      "retry_prompt_file": "prompts/retries/concept-sad.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/sad.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_070cf9a00851f256016a436d53f3008199bf42275507b3f7ec.png",
+      "completed_at": "2026-06-30T07:17:45.032180+00:00"
+    },
+    {
+      "id": "concept-doubt",
+      "kind": "emotion-concept",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/doubt.md",
+      "retry_prompt_file": "prompts/retries/concept-doubt.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/doubt.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0062b9154cb6d29b016a436da360708198bdc72e2608ab7ca0.png",
+      "completed_at": "2026-06-30T07:19:01.503288+00:00"
+    },
+    {
+      "id": "concept-sleepy",
+      "kind": "emotion-concept",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/concepts/sleepy.md",
+      "retry_prompt_file": "prompts/retries/concept-sleepy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/concepts/sleepy.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_04812c97e71e7ba1016a436df06a6c819a82e49f04412ef650.png",
+      "completed_at": "2026-06-30T07:20:41.711730+00:00"
+    },
+    {
+      "id": "body-base",
+      "kind": "body",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/body-base.md",
+      "retry_prompt_file": "prompts/retries/body-base.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/concept-320x240.png",
+          "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/body-base.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_06acbeb500b265ef016a436ec14e60819bb8d19c69713269e2.png",
+      "completed_at": "2026-06-30T07:23:56.343354+00:00"
+    },
+    {
+      "id": "eyes-neutral-left",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-neutral-left.md",
+      "retry_prompt_file": "prompts/retries/eyes-neutral-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-neutral-left.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0c30a7ecc7ac1bd4016a436f23d7b4819a939cdbe40f4a73cd.png",
+      "completed_at": "2026-06-30T07:25:28.139366+00:00"
+    },
+    {
+      "id": "eyes-neutral-right",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-neutral-right.md",
+      "retry_prompt_file": "prompts/retries/eyes-neutral-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-neutral-right.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0c30a7ecc7ac1bd4016a436f23d7b4819a939cdbe40f4a73cd.png",
+      "completed_at": "2026-06-30T07:25:28.167302+00:00"
+    },
+    {
+      "id": "mouth-neutral",
+      "kind": "mouth-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-neutral.md",
+      "retry_prompt_file": "prompts/retries/mouth-neutral.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/mouth-strip-4x96.png",
+          "role": "layout guide for four 96x48 mouth slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-neutral.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0c7ed44412977283016a4371858d5c81988d5be0042e6878a3.png",
+      "completed_at": "2026-06-30T07:35:14.837768+00:00"
+    },
+    {
+      "id": "eyes-happy-left",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-happy-left.md",
+      "retry_prompt_file": "prompts/retries/eyes-happy-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-happy-left.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_084890af1424f9bc016a436f77ba388198a30ee586417f8ff5.png",
+      "completed_at": "2026-06-30T07:26:38.933576+00:00"
+    },
+    {
+      "id": "eyes-happy-right",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-happy-right.md",
+      "retry_prompt_file": "prompts/retries/eyes-happy-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-happy-right.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_084890af1424f9bc016a436f77ba388198a30ee586417f8ff5.png",
+      "completed_at": "2026-06-30T07:26:38.959903+00:00"
+    },
+    {
+      "id": "mouth-happy",
+      "kind": "mouth-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-happy.md",
+      "retry_prompt_file": "prompts/retries/mouth-happy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/mouth-strip-4x96.png",
+          "role": "layout guide for four 96x48 mouth slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-happy.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_01d74cb585ccbdb5016a4371b7e2008199a26ed7e6b3d3eb95.png",
+      "completed_at": "2026-06-30T07:36:02.800725+00:00"
+    },
+    {
+      "id": "eyes-angry-left",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-angry-left.md",
+      "retry_prompt_file": "prompts/retries/eyes-angry-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-angry-left.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_067d164f411b8ff1016a436fba0cb8819b88dc66eafbd0e761.png",
+      "completed_at": "2026-06-30T07:27:46.434864+00:00"
+    },
+    {
+      "id": "eyes-angry-right",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-angry-right.md",
+      "retry_prompt_file": "prompts/retries/eyes-angry-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-angry-right.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_067d164f411b8ff1016a436fba0cb8819b88dc66eafbd0e761.png",
+      "completed_at": "2026-06-30T07:27:46.463078+00:00"
+    },
+    {
+      "id": "mouth-angry",
+      "kind": "mouth-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-angry.md",
+      "retry_prompt_file": "prompts/retries/mouth-angry.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/mouth-strip-4x96.png",
+          "role": "layout guide for four 96x48 mouth slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-angry.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0f874dda09afe459016a4371ec470c81988e34446459d86564.png",
+      "completed_at": "2026-06-30T07:36:54.246770+00:00"
+    },
+    {
+      "id": "eyes-sad-left",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sad-left.md",
+      "retry_prompt_file": "prompts/retries/eyes-sad-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sad-left.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_052ddad5e19e622c016a4370012cc4819aa0e6dd23696e75e5.png",
+      "completed_at": "2026-06-30T07:29:28.461378+00:00"
+    },
+    {
+      "id": "eyes-sad-right",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sad-right.md",
+      "retry_prompt_file": "prompts/retries/eyes-sad-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sad-right.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_052ddad5e19e622c016a4370012cc4819aa0e6dd23696e75e5.png",
+      "completed_at": "2026-06-30T07:29:28.486932+00:00"
+    },
+    {
+      "id": "mouth-sad",
+      "kind": "mouth-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-sad.md",
+      "retry_prompt_file": "prompts/retries/mouth-sad.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/mouth-strip-4x96.png",
+          "role": "layout guide for four 96x48 mouth slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-sad.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0821a887d257a5c6016a43721b43f88199bd0f529b14fc9d78.png",
+      "completed_at": "2026-06-30T07:37:53.684607+00:00"
+    },
+    {
+      "id": "eyes-doubt-left",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-doubt-left.md",
+      "retry_prompt_file": "prompts/retries/eyes-doubt-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-doubt-left.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_041a674af22b762a016a4370653288819897c2e7bb9f8d9c63.png",
+      "completed_at": "2026-06-30T07:30:47.512165+00:00"
+    },
+    {
+      "id": "eyes-doubt-right",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-doubt-right.md",
+      "retry_prompt_file": "prompts/retries/eyes-doubt-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-doubt-right.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_041a674af22b762a016a4370653288819897c2e7bb9f8d9c63.png",
+      "completed_at": "2026-06-30T07:30:47.537802+00:00"
+    },
+    {
+      "id": "mouth-doubt",
+      "kind": "mouth-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-doubt.md",
+      "retry_prompt_file": "prompts/retries/mouth-doubt.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/mouth-strip-4x96.png",
+          "role": "layout guide for four 96x48 mouth slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-doubt.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0fca5adf344d9505016a43725836ac8198ad2a263e4d7d6dcd.png",
+      "completed_at": "2026-06-30T07:38:41.339306+00:00"
+    },
+    {
+      "id": "eyes-sleepy-left",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sleepy-left.md",
+      "retry_prompt_file": "prompts/retries/eyes-sleepy-left.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sleepy-left.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_08b75224fccea672016a4370b557dc819b91f4e40c86f7fa67.png",
+      "completed_at": "2026-06-30T07:32:05.402268+00:00"
+    },
+    {
+      "id": "eyes-sleepy-right",
+      "kind": "eye-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/eyes-sleepy-right.md",
+      "retry_prompt_file": "prompts/retries/eyes-sleepy-right.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/eye-strip-4x48.png",
+          "role": "layout guide for four 48x48 eye slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/eyes-sleepy-right.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_08b75224fccea672016a4370b557dc819b91f4e40c86f7fa67.png",
+      "completed_at": "2026-06-30T07:32:05.427115+00:00"
+    },
+    {
+      "id": "mouth-sleepy",
+      "kind": "mouth-strip",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/parts/mouth-sleepy.md",
+      "retry_prompt_file": "prompts/retries/mouth-sleepy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/mouth-strip-4x96.png",
+          "role": "layout guide for four 96x48 mouth slots; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/parts/mouth-sleepy.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0e81b578ddcbd06a016a43728a743881988c06b1b46bc17226.png",
+      "completed_at": "2026-06-30T07:39:46.141848+00:00"
+    },
+    {
+      "id": "decorator-heart",
+      "kind": "decorator",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/heart.md",
+      "retry_prompt_file": "prompts/retries/decorator-heart.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/decorator-96.png",
+          "role": "layout guide for 96x96 decorator canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/decorators/heart.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0399d3002e36e935016a4372caf1f4819a918d02f4234df76b.png",
+      "completed_at": "2026-06-30T07:40:39.093362+00:00"
+    },
+    {
+      "id": "decorator-sweat",
+      "kind": "decorator",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/sweat.md",
+      "retry_prompt_file": "prompts/retries/decorator-sweat.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/decorator-96.png",
+          "role": "layout guide for 96x96 decorator canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/decorators/sweat.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0aafb0e71556687e016a437339a7dc819b9d89a6011554e185.png",
+      "completed_at": "2026-06-30T07:42:49.583562+00:00"
+    },
+    {
+      "id": "decorator-anger",
+      "kind": "decorator",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/anger.md",
+      "retry_prompt_file": "prompts/retries/decorator-anger.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/decorator-96.png",
+          "role": "layout guide for 96x96 decorator canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/decorators/anger.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_05416ca5d7e6359e016a43738de834819a8ad33e0dcc5e2bb4.png",
+      "completed_at": "2026-06-30T07:44:43.725327+00:00"
+    },
+    {
+      "id": "decorator-tear",
+      "kind": "decorator",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/tear.md",
+      "retry_prompt_file": "prompts/retries/decorator-tear.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/decorator-96.png",
+          "role": "layout guide for 96x96 decorator canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/decorators/tear.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_0473cb5461d09b25016a4373f51af881999fe070a826b11ecb.png",
+      "completed_at": "2026-06-30T07:45:23.578200+00:00"
+    },
+    {
+      "id": "decorator-dizzy",
+      "kind": "decorator",
+      "status": "complete",
+      "depends_on": [
+        "canonical-style"
+      ],
+      "prompt_file": "prompts/decorators/dizzy.md",
+      "retry_prompt_file": "prompts/retries/decorator-dizzy.md",
+      "input_images": [
+        {
+          "path": "references/canonical-style.png",
+          "role": "canonical hatch-pet-style identity reference"
+        },
+        {
+          "path": "references/input/reference-01.png",
+          "role": "user reference image"
+        },
+        {
+          "path": "references/layout-guides/decorator-96.png",
+          "role": "layout guide for 96x96 decorator canvas; use for spacing only, do not copy guide lines"
+        }
+      ],
+      "output_path": "decoded/decorators/dizzy.png",
+      "generation_skill": "$imagegen",
+      "requires_grounded_generation": true,
+      "allow_prompt_only_generation": false,
+      "source_path": "/Users/tianhaoxi/.codex/generated_images/019f1724-6308-7270-a626-fe79f9cd3141/ig_091a1baa45a9627f016a43741d73cc819ba5f0addbef999fc7.png",
+      "completed_at": "2026-06-30T07:46:10.930649+00:00"
+    }
+  ]
+}

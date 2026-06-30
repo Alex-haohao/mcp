@@ -1,0 +1,4 @@
+interface:
+  display_name: "StackChan Image Pack"
+  short_description: "Generate firmware-ready StackChan avatar packs"
+  default_prompt: "Use $stackchan-image-pack to generate a firmware-ready StackChan avatar image pack from this reference image."
