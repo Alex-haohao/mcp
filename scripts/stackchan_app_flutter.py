@@ -24,7 +24,7 @@ APP_DEFINE_KEYS = (
     "STACKCHAN_BLUE_PRIVATE_KEY_BASE64",
 )
 
-DEFINE_ACTIONS = {"test", "run", "build-ios-debug", "build-macos-debug"}
+DEFINE_ACTIONS = {"test", "run", "build-ios-debug", "build-ios-release", "build-macos-debug"}
 
 
 def parse_env_file(path: Path) -> dict[str, str]:
@@ -102,7 +102,20 @@ def run(command: list[str], cwd: Path) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Flutter commands for the StackChan app.")
-    parser.add_argument("action", choices=["pub-get", "analyze", "test", "build-ios-debug", "build-macos-debug", "run", "doctor", "print-config"])
+    parser.add_argument(
+        "action",
+        choices=[
+            "pub-get",
+            "analyze",
+            "test",
+            "build-ios-debug",
+            "build-ios-release",
+            "build-macos-debug",
+            "run",
+            "doctor",
+            "print-config",
+        ],
+    )
     parser.add_argument("flutter_args", nargs=argparse.REMAINDER, help="Extra arguments passed after the Flutter subcommand.")
     parser.add_argument("--stackchan-dir", type=Path, default=DEFAULT_STACKCHAN_DIR)
     parser.add_argument("--defines-file", type=Path, default=DEFAULT_DEFINES_FILE)
@@ -153,6 +166,8 @@ def main() -> int:
         return run([flutter, "test", *defines_arg, *extra], app_dir)
     if args.action == "build-ios-debug":
         return run([flutter, "build", "ios", "--debug", "--no-codesign", *defines_arg, *extra], app_dir)
+    if args.action == "build-ios-release":
+        return run([flutter, "build", "ios", "--release", *defines_arg, *extra], app_dir)
     if args.action == "build-macos-debug":
         return run([flutter, "build", "macos", "--debug", *defines_arg, *extra], app_dir)
     if args.action == "run":

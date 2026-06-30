@@ -148,24 +148,11 @@ xcodebuild -workspace ios/Runner.xcworkspace \
   -showBuildSettings | rg "DEVELOPMENT_TEAM|PRODUCT_BUNDLE_IDENTIFIER|STACKCHAN_IOS"
 ```
 
-Then install through the root Flutter wrapper so the current self-hosted server
-and RSA dart-define values are injected without printing secrets:
+Install through the root Flutter wrapper so the current self-hosted server and
+RSA dart-define values are injected without printing secrets:
 
 ```bash
-scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false run -- \
-  -d 00008150-000C18EE0A87801C \
-  --no-resident
-```
-
-If Flutter builds the app but fails while starting the Xcode debug session, use
-the signed build plus `devicectl` path instead:
-
-```bash
-scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false print-config
-cd .worktrees/StackChan-server-app/app
-flutter build ios --debug \
-  --dart-define-from-file=/Users/tianhaoxi/project/mcp/workspace/stackchan-secrets/server/app-dart-defines.generated.env
-cd /Users/tianhaoxi/project/mcp
+scripts/stackchan_app_flutter.py --host 162.211.181.150 --tls false build-ios-release
 xcrun devicectl device install app \
   --device 00008150-000C18EE0A87801C \
   .worktrees/StackChan-server-app/app/build/ios/iphoneos/Runner.app
@@ -173,6 +160,36 @@ xcrun devicectl device process launch \
   --device 00008150-000C18EE0A87801C \
   com.tianhaoxi.stackchan \
   --terminate-existing
+```
+
+Use `xcrun devicectl list devices` if the device identifier changes. The local
+iPhone may also appear with a CoreDevice identifier such as
+`5555F2DC-40D5-589B-9A59-F9EE7A21EAD4`; either identifier can be used when
+`devicectl` accepts it.
+
+As of 2026-07-01, the signed release path is the verified path on the local
+machine:
+
+- Toolchain: Flutter 3.44.4 stable, Xcode 26.6, iPhone OS 26.5.1.
+- Debug `flutter run`/debug install can white-screen and exit before Dart UI is
+  usable. Crash logs showed `CameraPlugin.register(with:)` in
+  `camera_avfoundation` via `swift_getObjectType`.
+- The first startup crash seen in the default debug app was
+  `VSyncClient initWithTaskRunner` from `FlutterViewController.viewDidLoad`; an
+  experimental explicit-engine Runner change moved the crash but was not needed
+  for release, so it was discarded to keep the official app patch small.
+- The full app is not currently a reliable Apple Silicon iOS 26 simulator smoke:
+  the dependency set reports missing arm64 simulator support for Google MLKit,
+  MLImage, MLKitVision, MLKitFaceDetection, DartCvIOS, OpenCV, and related pods.
+
+Verify that the installed release app remains alive:
+
+```bash
+xcrun devicectl device info processes \
+  --device 00008150-000C18EE0A87801C | rg "stackchan|Runner|com\\.tianhaoxi"
+xcrun devicectl device info files \
+  --device 00008150-000C18EE0A87801C \
+  --domain-type systemCrashLogs | rg "Runner-" | tail
 ```
 
 ## Research Notes
