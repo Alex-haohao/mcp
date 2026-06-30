@@ -4,6 +4,8 @@
 
 **Goal:** Add a custom image-based StackChan avatar skin to the official ESP-IDF firmware while preserving the official AI Agent, mobile app control, OTA, WebSocket/BLE avatar protocol, motion, speech, decorators, and default avatar.
 
+**Required context:** Read `docs/stackchan-official-device-context.md` before executing this plan. It records the current official M5Stack product documentation, official firmware source entry points, assets partition behavior, current generated pack status, and the Arduino-vs-ESP-IDF boundary.
+
 **Architecture:** Add a new `ImageAvatar` skin beside `DefaultAvatar`; do not replace or delete the official skin. Keep the semantic control layer unchanged (`Emotion`, `leftEye`, `rightEye`, `mouth`, modifiers, decorators) and map those values into image/sprite frame selection. Put all pure mapping logic in host-testable files before integrating LVGL.
 
 **Tech Stack:** Official `m5stack/StackChan` firmware, ESP-IDF v5.5.4, C++17, LVGL, `smooth_lvgl`, official host-side CMake tests under `firmware/tests`.
