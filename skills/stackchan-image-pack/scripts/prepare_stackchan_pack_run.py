@@ -28,6 +28,20 @@ DEFAULT_ANCHORS = {
     "rightEye": {"x": 180, "y": 88},
     "mouth": {"x": 160, "y": 135},
 }
+DEFAULT_FACE_PROPORTION_CONTRACT = {
+    "purpose": "upstream generation guide for readable StackChan ImageAvatar face proportions",
+    "canvas": CANVAS,
+    "faceBox": {"x": 96, "y": 42, "width": 128, "height": 102},
+    "leftEyeSlot": {"x": 112, "y": 64, "width": 48, "height": 40},
+    "rightEyeSlot": {"x": 160, "y": 64, "width": 48, "height": 40},
+    "mouthSlot": {"x": 126, "y": 102, "width": 68, "height": 30},
+    "rules": [
+        "Generate features at their final intended apparent size; do not expect scripts to resize, redraw, or relocate them.",
+        "Eyes should be large and readable at 320x240 while leaving clear padding inside each 48x48 frame.",
+        "The closed mouth must remain readable at 320x240, and open mouth frames must stay inside the mouth slot.",
+        "If a generated component misses this proportion contract, regenerate that component upstream.",
+    ],
+}
 STACKCHAN_SAFE_STYLE = (
     "StackChan-safe sprite: compact front-facing robot mascot, readable on a "
     "320x240 device display, simple face language, stable palette/materials, "
@@ -74,7 +88,7 @@ def write_json(path: Path, data: object) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def make_layout_guide(path: Path, width: int, height: int, cols: int, rows: int, label: str) -> None:
+def make_layout_guide(path: Path, width: int, height: int, cols: int, rows: int, _label: str) -> None:
     if Image is None or ImageDraw is None:
         return
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -90,7 +104,35 @@ def make_layout_guide(path: Path, width: int, height: int, cols: int, rows: int,
         draw.line((0, y, width, y), fill="#bbbbbb")
     margin = 6
     draw.rectangle((margin, margin, width - margin - 1, height - margin - 1), outline="#777777")
-    draw.text((8, 8), label, fill="#333333")
+    image.save(path)
+
+
+def make_face_proportion_guide(path: Path) -> None:
+    if Image is None or ImageDraw is None:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image = Image.new("RGB", (CANVAS["width"], CANVAS["height"]), "#f7f7f7")
+    draw = ImageDraw.Draw(image)
+    contract = DEFAULT_FACE_PROPORTION_CONTRACT
+
+    def rect(key: str, color: str, width: int) -> None:
+        value = contract[key]
+        draw.rectangle(
+            (
+                int(value["x"]),
+                int(value["y"]),
+                int(value["x"] + value["width"]),
+                int(value["y"] + value["height"]),
+            ),
+            outline=color,
+            width=width,
+        )
+
+    rect("faceBox", "#38a169", 2)
+    rect("leftEyeSlot", "#3182ce", 2)
+    rect("rightEyeSlot", "#3182ce", 2)
+    rect("mouthSlot", "#d53f8c", 2)
+    draw.line((160, 18, 160, 222), fill="#b8b8b8", width=1)
     image.save(path)
 
 
@@ -184,6 +226,7 @@ Style contract: {args.style_contract}
 Use attached reference images as identity and style inspiration.
 Expression: neutral, calm, friendly, compact, hatch-pet-like, and readable on a small robot screen.
 Show the full head/body composition suitable for later separation into body, eyes, and mouth.
+Use the attached face-proportion guide only to keep the eyes and mouth at readable StackChan screen proportions; do not draw the guide.
 Make it pixel-art-adjacent by default: chunky silhouette, simple face, limited palette, crisp outline, flat cel shading, and visible stepped edges.
 The result should be attractive enough to become the canonical style: cute, balanced, expressive, and polished, not generic filler art.
 No logo copying.
@@ -197,6 +240,7 @@ Create one 320x240 front-facing StackChan avatar concept for emotion: {emotion}.
 Use canonical-style.png as the strict identity and hatch-pet-like pixel/sprite style reference.
 Change only the expression language: eyes, mouth, brows or face attitude, and subtle pose mood.
 Keep body shape, palette, material, proportions, line style, and screen composition consistent.
+Use the attached face-proportion guide only to preserve readable eye and mouth scale on the 320x240 face; do not draw the guide.
 Keep the expression appealing and readable at device scale.
 This is a concept preview, not a sprite strip.
 {shared_constraints(args)}
@@ -210,6 +254,7 @@ Use canonical-style.png as the strict reference.
 Render the character body/head and permanent accessories only.
 The eye and mouth areas must be clean and ready for separate eye and mouth sprites.
 Do not draw final pupils, eyelids, mouth, teeth, tongue, or expression marks.
+Use the attached face-proportion guide only to reserve clean feature areas at the intended scale; do not draw the guide.
 Keep the body centered and aligned for overlay at 320x240.
 {shared_constraints(args)}
 """
@@ -219,10 +264,14 @@ def prompt_eye(args: argparse.Namespace, emotion: str, side: str) -> str:
     return f"""
 Create one horizontal sprite strip for the {side} eye of the same StackChan character, emotion: {emotion}.
 Each frame is 48x48; total image is 192x48.
-Use the attached layout guide only for slot count, spacing, centering, and padding; do not draw the guide.
+Use the attached strip layout guide only for slot count, spacing, centering, and padding; do not draw the guide.
+Use the attached body base, {emotion} concept, and face-proportion guide to match the final intended eye scale on the 320x240 face.
+upstream generation contract: create the eye at the correct apparent size, shape, and visual weight now.
 Frame order: open, half-open or expression transition, narrow/blink transition, closed or strongest expression.
 Keep the same scale, anchor point, palette, outline, material, pixel-art-adjacent style, and baseline across all four frames.
 Use generous padding inside each 48x48 slot. No visible slot borders.
+Regenerate this component if the eye would need script scaling, redrawing, or manual relocation to fit the face.
+Do not rely on postprocessing to fix eye size, eye position, line weight, or expression readability.
 {shared_constraints(args)}
 """
 
@@ -231,11 +280,16 @@ def prompt_mouth(args: argparse.Namespace, emotion: str) -> str:
     return f"""
 Create one horizontal sprite strip for the mouth of the same StackChan character, emotion: {emotion}.
 Each frame is 96x48; total image is 384x48.
-Use the attached layout guide only for slot count, spacing, centering, and padding; do not draw the guide.
+Use the attached strip layout guide only for slot count, spacing, centering, and padding; do not draw the guide.
+Use the attached body base, {emotion} concept, and face-proportion guide to match the final intended mouth scale on the 320x240 face.
+upstream generation contract: create the mouth at the correct apparent size, shape, and visual weight now.
 Frame order: closed, small open, medium open, wide open.
 Keep the same anchor point, palette, outline, material, pixel-art-adjacent style, and baseline across all four frames.
 Use mouth shapes suitable for speech animation on a 320x240 robot avatar.
+The closed mouth must still be readable at device scale, and open mouth frames must stay visually compatible with the face-proportion guide.
 No visible slot borders.
+Regenerate this component if the mouth would need script scaling, redrawing, or manual relocation to fit the face.
+Do not rely on postprocessing to fix mouth size, mouth position, line weight, or expression readability.
 {shared_constraints(args)}
 """
 
@@ -363,6 +417,7 @@ def main() -> None:
     make_layout_guide(run_dir / "references/layout-guides/eye-strip-4x48.png", 192, 48, 4, 1, "4 x 48x48 eye frames")
     make_layout_guide(run_dir / "references/layout-guides/mouth-strip-4x96.png", 384, 48, 4, 1, "4 x 96x48 mouth frames")
     make_layout_guide(run_dir / "references/layout-guides/decorator-96.png", 96, 96, 1, 1, "96x96 decorator")
+    make_face_proportion_guide(run_dir / "references/layout-guides/face-proportion-320x240.png")
 
     refs: list[dict[str, str]] = []
     copied_reference_paths: list[Path] = []
@@ -380,6 +435,10 @@ def main() -> None:
     concept_layout = {
         "path": "references/layout-guides/concept-320x240.png",
         "role": "layout guide for 320x240 canvas; use for spacing only, do not copy guide lines",
+    }
+    face_proportion_layout = {
+        "path": "references/layout-guides/face-proportion-320x240.png",
+        "role": "face-proportion guide for 320x240 eye and mouth scale; use for proportions only, do not copy guide lines",
     }
     eye_layout = {
         "path": "references/layout-guides/eye-strip-4x48.png",
@@ -402,7 +461,15 @@ def main() -> None:
         retry_rel = f"prompts/retries/neutral-style-{index}.md"
         output_rel = f"decoded/concepts/neutral-style-{index}.png"
         write_text(run_dir / retry_rel, retry_prompt(args, f"neutral-style-{index}", "one 320x240 neutral style candidate"))
-        add_job(jobs, f"neutral-style-{index}", "style-candidate", prompt_rel, output_rel, [*refs, concept_layout], retry_prompt_file=retry_rel)
+        add_job(
+            jobs,
+            f"neutral-style-{index}",
+            "style-candidate",
+            prompt_rel,
+            output_rel,
+            [*refs, concept_layout, face_proportion_layout],
+            retry_prompt_file=retry_rel,
+        )
 
     jobs.append(
         {
@@ -427,28 +494,75 @@ def main() -> None:
         retry_rel = f"prompts/retries/concept-{emotion}.md"
         output_rel = f"decoded/concepts/{emotion}.png"
         write_text(run_dir / retry_rel, retry_prompt(args, f"concept-{emotion}", "one 320x240 emotion concept"))
-        add_job(jobs, f"concept-{emotion}", "emotion-concept", prompt_rel, output_rel, [*canonical, concept_layout], ["canonical-style"], retry_rel)
+        add_job(
+            jobs,
+            f"concept-{emotion}",
+            "emotion-concept",
+            prompt_rel,
+            output_rel,
+            [*canonical, concept_layout, face_proportion_layout],
+            ["canonical-style"],
+            retry_rel,
+        )
 
     prompt_rel = "prompts/parts/body-base.md"
     write_text(run_dir / prompt_rel, prompt_body(args))
     retry_rel = "prompts/retries/body-base.md"
     write_text(run_dir / retry_rel, retry_prompt(args, "body-base", "one 320x240 body/head base layer"))
-    add_job(jobs, "body-base", "body", prompt_rel, "decoded/parts/body-base.png", [*canonical, concept_layout], ["canonical-style"], retry_rel)
+    add_job(
+        jobs,
+        "body-base",
+        "body",
+        prompt_rel,
+        "decoded/parts/body-base.png",
+        [*canonical, concept_layout, face_proportion_layout],
+        ["canonical-style"],
+        retry_rel,
+    )
 
     for emotion in EMOTIONS:
+        emotion_context = [
+            {
+                "path": "decoded/parts/body-base.png",
+                "role": "accepted body base for final 320x240 overlay context",
+            },
+            {
+                "path": f"decoded/concepts/{emotion}.png",
+                "role": f"accepted {emotion} concept showing final face proportion and expression",
+            },
+        ]
+        part_depends_on = ["canonical-style", "body-base", f"concept-{emotion}"]
         for side in ["left", "right"]:
             prompt_rel = f"prompts/parts/eyes-{emotion}-{side}.md"
             write_text(run_dir / prompt_rel, prompt_eye(args, emotion, side))
             retry_rel = f"prompts/retries/eyes-{emotion}-{side}.md"
             output_rel = f"decoded/parts/eyes-{emotion}-{side}.png"
             write_text(run_dir / retry_rel, retry_prompt(args, f"eyes-{emotion}-{side}", "one 192x48 four-frame eye strip"))
-            add_job(jobs, f"eyes-{emotion}-{side}", "eye-strip", prompt_rel, output_rel, [*canonical, eye_layout], ["canonical-style"], retry_rel)
+            add_job(
+                jobs,
+                f"eyes-{emotion}-{side}",
+                "eye-strip",
+                prompt_rel,
+                output_rel,
+                [*canonical, *emotion_context, eye_layout, face_proportion_layout],
+                part_depends_on,
+                retry_rel,
+            )
         prompt_rel = f"prompts/parts/mouth-{emotion}.md"
         write_text(run_dir / prompt_rel, prompt_mouth(args, emotion))
         retry_rel = f"prompts/retries/mouth-{emotion}.md"
         output_rel = f"decoded/parts/mouth-{emotion}.png"
         write_text(run_dir / retry_rel, retry_prompt(args, f"mouth-{emotion}", "one 384x48 four-frame mouth strip"))
-        add_job(jobs, f"mouth-{emotion}", "mouth-strip", prompt_rel, output_rel, [*canonical, mouth_layout], ["canonical-style"], retry_rel)
+        add_job(
+            jobs,
+            f"mouth-{emotion}",
+            "mouth-strip",
+            prompt_rel,
+            output_rel,
+            [*canonical, *emotion_context, mouth_layout, face_proportion_layout],
+            part_depends_on,
+            retry_rel,
+        )
 
     for decorator in DECORATORS:
         prompt_rel = f"prompts/decorators/{decorator}.md"
@@ -472,12 +586,14 @@ def main() -> None:
             "primary_generation_skill": "$imagegen",
             "hatch_pet_alignment": {
                 "upstream": "openai/skills hatch-pet",
-                "workflow": "canonical identity, layout-guide-grounded strips, concise sprite-production prompts, deterministic finalization, contact-sheet QA",
+                "workflow": "canonical identity, upstream face-proportion contract, layout-guide-grounded strips, concise sprite-production prompts, deterministic finalization, contact-sheet QA",
                 "visual_default": "pixel-art-adjacent hatch-pet sprite style",
             },
+            "face_proportion_contract": DEFAULT_FACE_PROPORTION_CONTRACT,
             "created_at": datetime.now(timezone.utc).isoformat(),
         },
     )
+    write_json(run_dir / "references/face-proportion-contract.json", DEFAULT_FACE_PROPORTION_CONTRACT)
     write_json(
         run_dir / "imagegen-jobs.json",
         {

@@ -31,11 +31,12 @@ The visual default must be hatch-pet-like pixel/sprite art: compact mascot silho
 - create a canonical base image first;
 - ground every later generation in that base;
 - generate small state/component jobs instead of one giant sheet;
+- ground each component in the accepted visual source of truth before generation;
 - use chroma-key or transparent-output discipline;
 - attach layout guides to strip jobs;
 - use concise sprite-production prompts rather than generic illustration prompts;
 - validate with scripts, then visually inspect contact sheets;
-- repair the smallest failing row/component.
+- repair the smallest failing row/component by regenerating that generated source job.
 
 Its output contract is not appropriate for StackChan because it targets a Codex pet 8x9 atlas with 192x208 cells.
 
@@ -48,8 +49,9 @@ The current review used `openai/skills` main commit `49f948faa9258a0c61caceaf225
 | `$imagegen` is the only normal visual generation path | Every visual job now records `generation_skill: "$imagegen"` in `imagegen-jobs.json`. |
 | Base/canonical image is the identity lock | Three neutral style candidates are generated first; `record_stackchan_job_output.py --promote-canonical` records the selected one as `references/canonical-style.png`. |
 | Row/strip jobs use layout guides | Eye, mouth, concept, and decorator jobs attach layout-guide images as construction references. |
+| Row/strip jobs are grounded by accepted art | Eye and mouth jobs attach canonical style, body base, matching emotion concept, strip guide, and face-proportion guide. |
 | Prompts are sprite-production oriented | Default prompts now say hatch-pet-like pixel-art-adjacent sprite, compact silhouette, limited palette, crisp outline, flat cel shading, hard edges. |
-| Deterministic scripts own geometry | `finalize_stackchan_pack.py` splits strips and writes `final/manifest.json`; validation checks sizes, alpha, and required files. |
+| Deterministic scripts own geometry and validation, not art repair | `postprocess_stackchan_assets.py` removes chroma key and normalizes whole images only; `finalize_stackchan_pack.py` splits strips and writes `final/manifest.json`; validation checks sizes, alpha, and required files. |
 | Contact sheet and previews are required visual QA | `qa/contact-sheet.png` and `qa/previews/*.gif` are completion criteria, not optional debug output. |
 | 8x9 atlas and Codex app states | Intentionally not copied; StackChan uses 320x240 ImageAvatar components and six emotion states. |
 
@@ -134,16 +136,20 @@ stackchan-image-pack/
 - Writes `manifest.template.json`.
 - Defaults generation to hatch-pet-like pixel sprite style and records `$imagegen` as the primary visual generation layer.
 - Records selected generated outputs, promotes canonical style, and marks jobs complete.
+- Creates a reusable upstream `face-proportion-contract.json` and guide image so generated concepts and parts start with correct eye/mouth scale.
+- Requires eye and mouth jobs to use canonical style, accepted body base, matching emotion concept, strip guide, and face-proportion guide.
+- Postprocesses decoded assets in `upstream-preserving` mode: chroma-key removal plus whole-canvas normalization only.
 - Finalizes decoded outputs into a complete `final/` pack by splitting eye and mouth strips into individual frames.
 - Validates final `manifest.json`.
 - Creates a 6-emotion contact sheet, semantic-fit diagnostics, anchor-fit diagnostics, motion sheet, and expression preview GIFs for visual QA.
-- Records either generic postprocess evidence or targeted face-layout repair evidence in `qa/postprocess-summary.json`.
+- Records postprocess evidence in `qa/postprocess-summary.json` and fails visual QA when the generated source itself has bad proportions.
 
 ### What The Skill Does Not Do
 
 - It does not generate artwork locally.
 - It does not call image APIs directly.
 - It does not replace `$imagegen`.
+- It does not draw, scale, crop, reconstruct, or recenter eyes or mouths to make bad generated assets pass.
 - It does not generate LVGL C files.
 - It does not modify official StackChan firmware.
 
@@ -155,20 +161,22 @@ stackchan-image-pack/
 4. Choose one candidate, record it with `record_stackchan_job_output.py --promote-canonical`, and create `references/canonical-style.png`.
 5. Write `references/identity-notes.md` and `references/art-direction.md`.
 6. Generate six emotion concepts: `neutral`, `happy`, `angry`, `sad`, `doubt`, `sleepy`.
-7. Generate runtime parts:
+7. Inspect the accepted concepts at 320x240 and reject/regenerate any concept whose eye or mouth proportions are already wrong.
+8. Generate runtime parts with all required grounding inputs:
    - `body/base.png`
    - `eyes-<emotion>-left.png` and `eyes-<emotion>-right.png` strips
    - `mouth-<emotion>.png` strips
    - `decorators/heart.png`, `sweat.png`, `anger.png`, `tear.png`, `dizzy.png`
-8. Create or update `references/face-layout.json` before accepting a repaired or visually questioned pack.
-9. Run `finalize_stackchan_pack.py` to create `final/manifest.json` and all individual frame PNGs.
-10. Run validation.
-11. Ensure `qa/postprocess-summary.json` describes the final decoded assets. For ordinary generation this comes from `postprocess_stackchan_assets.py`; for targeted face-slot repairs it must be written by the repair tool with `mode: "face-layout-repair"`.
-12. Run semantic-fit diagnostics and inspect `qa/semantic-fit/neutral-semantic-overlay.png`.
-13. Generate and inspect contact sheet plus motion sheet.
-14. Run anchor-fit diagnostics and inspect `qa/anchor-fit/*-concept-vs-overlay.png`.
-15. Render and inspect preview GIFs.
-16. Convert final PNGs to LVGL descriptors only after source-level semantic-fit and anchor-fit pass.
+9. Run `postprocess_stackchan_assets.py`; confirm `qa/postprocess-summary.json` has `mode: "upstream-preserving"`.
+10. Create or update `references/face-layout.json` before firmware handoff or when proportions are visually questioned.
+11. Run `finalize_stackchan_pack.py` to create `final/manifest.json` and all individual frame PNGs.
+12. Run validation.
+13. Run semantic-fit diagnostics and inspect `qa/semantic-fit/neutral-semantic-overlay.png` when `face-layout.json` exists.
+14. Generate and inspect contact sheet plus motion sheet.
+15. Run anchor-fit diagnostics and inspect `qa/anchor-fit/*-concept-vs-overlay.png`.
+16. Render and inspect preview GIFs.
+17. If eyes or mouth are wrong, regenerate the smallest failing `$imagegen` job or calibrate anchors; do not run a local art repair script.
+18. Convert final PNGs to LVGL descriptors only after source-level semantic-fit and anchor-fit pass.
 
 Firmware integration now lives in the workspace StackChan fork submodule:
 
@@ -208,6 +216,13 @@ Record a selected generated output and promote the canonical style:
   --source /absolute/path/to/selected-output.png \
   --promote-canonical \
   --force
+```
+
+Postprocess selected generated outputs without changing facial proportions:
+
+```bash
+"$PYTHON" "$SKILL_DIR/scripts/postprocess_stackchan_assets.py" \
+  --run-dir /absolute/path/to/run
 ```
 
 Finalize generated decoded assets into a complete pack:
@@ -305,12 +320,15 @@ Default runtime completeness is intentionally not a full-screen animation set. T
 
 ## Anchor And Proportion Release Gate
 
-This gate exists because the current IMG4635 pack exposed a process failure: the 320x240 body layer could be centered and structurally valid while the eyes and mouth still looked wrong on the actual face. The root problem was not the LVGL descriptor format and not the overall body scale. The pack used unproven anchor values through finalization, and the QA chain treated validation plus contact-sheet generation as stronger evidence than they actually were.
+This gate exists because the IMG4635 pack exposed a process failure: the 320x240 body layer could be centered and structurally valid while the eyes and mouth still looked wrong on the actual face. The root problem was not the LVGL descriptor format and not the overall body scale. The workflow allowed weak component generation and then tried to compensate downstream. That is not reusable.
+
+The durable rule is upstream first: concept faces must have correct proportions before part generation, and eye/mouth strip sources must be generated with body base, matching concept, strip guide, and face-proportion guide attached. Postprocess is allowed to remove chroma key and normalize whole images only.
 
 Required evidence before LVGL conversion or flashing:
 
+- `postprocess_stackchan_assets.py` writes `mode: "upstream-preserving"`.
 - `validate_stackchan_pack.py` passes for structure and dimensions.
-- `diagnose_stackchan_semantic_fit.py` passes against `references/face-layout.json`.
+- `diagnose_stackchan_semantic_fit.py` passes against `references/face-layout.json` when the pack is headed to firmware or has been visually questioned.
 - `qa/semantic-fit/neutral-semantic-overlay.png` is inspected against the accepted face slots.
 - `make_stackchan_motion_sheet.py` writes `qa/motion-sheet.png`, and eye progression and mouth progression are inspected independently.
 - `diagnose_stackchan_anchor_fit.py` writes `qa/anchor-fit/anchor-fit-report.json`.
@@ -319,43 +337,23 @@ Required evidence before LVGL conversion or flashing:
 - First-frame mouth dimensions are checked for readability; a closed mouth that is only a few pixels wide/high is a repair candidate even if it is centered.
 - The reviewer explicitly classifies failures as anchor calibration, eye/mouth strip quality, body-base mismatch, or runtime integration before changing code.
 
-Do not fix this class of issue by directly nudging firmware constants first. Firmware constants should be regenerated from accepted manifest anchors. If source-level composition is wrong, repair the manifest or source strips and record the postprocess evidence for the final decoded assets, then rerun finalize, validation, semantic-fit, contact sheet, motion sheet, anchor-fit diagnostics, and previews. Only investigate LVGL/runtime coordinate behavior when source-level overlay images look correct but the device does not.
+Do not fix this class of issue by directly nudging firmware constants first. Firmware constants should be regenerated from accepted manifest anchors. If source-level composition is wrong, regenerate the bad concept, body, eye strip, or mouth strip source with `$imagegen`, then rerun postprocess, finalize, validation, semantic-fit, contact sheet, motion sheet, anchor-fit diagnostics, and previews. Only investigate LVGL/runtime coordinate behavior when source-level overlay images look correct but the device does not.
 
-Important postprocess rule for repaired packs: do not blindly rerun the generic chroma-key/strip-centering postprocess over eye and mouth strips that have already been placed against `references/face-layout.json`. Generic recentering can pass structural checks while destroying semantic face placement. A targeted repair tool should write `qa/postprocess-summary.json` with `mode: "face-layout-repair"` and the acceptance proof must come from semantic-fit, anchor-fit, motion-sheet, contact-sheet, and preview artifacts after finalization.
-
-For the earlier broken IMG4635 pack, the observed evidence was:
-
-- body source is 320x240 and centered;
-- eye and mouth source frames have correct dimensions and are internally centered;
-- broken anchors were `leftEye=(140,84)`, `rightEye=(180,84)`, `mouth=(160,109)`;
-- those anchors convert to firmware offsets `(-20,-36)`, `(20,-36)`, `(0,-11)`;
-- source-level overlay already shows eyes too high/close and mouth too high/small;
-- neutral closed mouth content is about `21x7` inside a 96x48 frame, which is weak at device scale.
-
-The repaired IMG4635 pack uses an explicit `references/face-layout.json` derived from the accepted concept face:
-
-- accepted anchors are `leftEye=(136,82)`, `rightEye=(182,82)`, `mouth=(158,109)`;
-- firmware offsets are derived from those anchors as `(-24,-38)`, `(22,-38)`, `(-2,-11)`;
-- `qa/semantic-fit/semantic-fit-report.json` is `ok: true`;
-- `qa/anchor-fit/anchor-fit-report.json` is `ok: true`;
-- `qa/postprocess-summary.json` has `mode: "face-layout-repair"`;
-- `qa/motion-sheet.png` verifies eye and mouth frame progressions independently.
-
-Therefore the durable fix is to make semantic-fit, anchor-fit comparison, motion-sheet review, and mouth readability part of acceptance, not to apply one-off coordinate patches after flashing.
+For the earlier broken IMG4635 pack, the useful evidence was that validation and contact-sheet generation were insufficient: the mouth was visually weak at device scale and the composed face was worse than the concept face. The failed lesson is not a repair recipe; it is the reason this skill now blocks local feature reconstruction and requires upstream proportion grounding.
 
 ## Guarantee Boundary
 
-The skill can mechanically guarantee structural completeness when the workflow is followed: no pack is accepted until `finalize_stackchan_pack.py`, `validate_stackchan_pack.py`, semantic-fit, contact-sheet generation, motion-sheet generation, and anchor-fit diagnostic generation all pass.
+The skill can mechanically guarantee structural completeness when the workflow is followed: no pack is accepted until upstream-preserving postprocess, `finalize_stackchan_pack.py`, `validate_stackchan_pack.py`, contact-sheet generation, motion-sheet generation, and preview generation pass. For firmware handoff or visually questioned packs, semantic-fit and anchor-fit diagnostics are also release gates.
 
-The skill cannot mechanically guarantee perfect character taste, expression quality, hatch-pet-like pixel aesthetics, anchor taste, or identity consistency from image generation alone. Those are handled by three style candidates, `art-direction.md`, the contact sheet, semantic-fit overlay, anchor-fit diagnostics, motion sheet, preview GIFs, the final visual QA worker, and the QA rubric. If visual QA finds drift, repair the smallest failing component strip, anchor set, body layer, or decorator, then rerun the full deterministic QA chain.
+The skill cannot mechanically guarantee perfect character taste, expression quality, hatch-pet-like pixel aesthetics, anchor taste, or identity consistency from image generation alone. Those are handled by three style candidates, `art-direction.md`, the contact sheet, semantic-fit overlay, anchor-fit diagnostics, motion sheet, preview GIFs, the final visual QA worker, and the QA rubric. If visual QA finds drift, regenerate the smallest failing `$imagegen` source job or calibrate anchors, then rerun the full deterministic QA chain.
 
 For this template, "interpolation" or "difference" images mean the required component animation frames: four eye frames per side per emotion and four mouth frames per emotion. It does not yet define full tweened transitions between two different emotions. If firmware later needs smoother full-expression transitions, extend the frame count and manifest contract before generating assets.
 
 ## Validation Status
 
-The skill was initialized with the official skill-creator script. Its prepare script was dry-run successfully and produced 34 jobs, including the manual `canonical-style` selection job, plus a manifest template. Recording, postprocess, finalize, validation, semantic-fit, contact-sheet, motion-sheet, anchor-fit, and preview scripts were tested together with temporary transparent PNG fixtures and passed.
+The skill was initialized with the official skill-creator script. Its prepare script was dry-run successfully and produced 34 jobs, including the manual `canonical-style` selection job, plus a manifest template.
 
-On 2026-06-30, the IMG4635 pack was repaired and verified with `validate_stackchan_pack.py`, `diagnose_stackchan_semantic_fit.py`, `make_stackchan_contact_sheet.py`, `diagnose_stackchan_anchor_fit.py`, `make_stackchan_motion_sheet.py`, and `render_stackchan_motion_previews.py`. The corresponding ImageAvatar firmware built with ESP-IDF v5.5.4 and flashed to `/dev/cu.usbmodem101`; boot logs reached Launcher and created AVATAR/AI.AGENT apps without descriptor errors.
+On 2026-06-30, `selftest_stackchan_pack.py` was updated to catch the failed workflow: part jobs must include the face-proportion guide and accepted visual context, prompts must forbid postprocess-based facial repair, and postprocess must preserve strip layout instead of recentering features. The self-test passes with temporary transparent PNG fixtures.
 
 ## Sources
 

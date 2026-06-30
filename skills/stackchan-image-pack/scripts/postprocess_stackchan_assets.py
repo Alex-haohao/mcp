@@ -13,11 +13,8 @@ from PIL import Image
 
 CANVAS_SIZE = (320, 240)
 EYE_STRIP_SIZE = (192, 48)
-EYE_FRAME_SIZE = (48, 48)
 MOUTH_STRIP_SIZE = (384, 48)
-MOUTH_FRAME_SIZE = (96, 48)
 DECORATOR_SIZE = (96, 96)
-FRAME_COUNT = 4
 
 
 def read_json(path: Path) -> dict:
@@ -65,22 +62,9 @@ def key_to_alpha(image: Image.Image, key: tuple[int, int, int], tolerance: int) 
     return rgba
 
 
-def crop_content(image: Image.Image, padding: int) -> Image.Image:
-    bbox = image.getbbox()
-    if bbox is None:
+def resize_canvas_preserving_layout(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+    if image.size == size:
         return image
-    left, top, right, bottom = bbox
-    return image.crop(
-        (
-            max(0, left - padding),
-            max(0, top - padding),
-            min(image.width, right + padding),
-            min(image.height, bottom + padding),
-        )
-    )
-
-
-def resize_contain(image: Image.Image, size: tuple[int, int]) -> Image.Image:
     target_w, target_h = size
     scale = min(target_w / image.width, target_h / image.height)
     resized_size = (max(1, round(image.width * scale)), max(1, round(image.height * scale)))
@@ -90,44 +74,14 @@ def resize_contain(image: Image.Image, size: tuple[int, int]) -> Image.Image:
     return canvas
 
 
-def normalize(source: Path, output: Path, size: tuple[int, int], key: tuple[int, int, int], tolerance: int, padding: int) -> None:
+def normalize(source: Path, output: Path, size: tuple[int, int], key: tuple[int, int, int], tolerance: int) -> None:
     with Image.open(source) as image:
         keyed = key_to_alpha(image, key, tolerance)
-    normalized = resize_contain(crop_content(keyed, padding), size)
+    normalized = resize_canvas_preserving_layout(keyed, size)
     output.parent.mkdir(parents=True, exist_ok=True)
     tmp = output.with_name(output.stem + ".tmp.png")
     normalized.save(tmp)
     shutil.move(str(tmp), output)
-
-
-def center_strip_frames(path: Path, frame_size: tuple[int, int]) -> None:
-    with Image.open(path) as image:
-        strip = image.convert("RGBA")
-    frame_w, frame_h = frame_size
-    expected_size = (frame_w * FRAME_COUNT, frame_h)
-    if strip.size != expected_size:
-        raise SystemExit(f"wrong strip size for {path}: expected {expected_size}, got {strip.size}")
-    centered = Image.new("RGBA", expected_size, (0, 0, 0, 0))
-    for index in range(FRAME_COUNT):
-        frame = strip.crop((index * frame_w, 0, (index + 1) * frame_w, frame_h))
-        bbox = frame.getbbox()
-        if bbox is None:
-            continue
-        content = frame.crop(bbox)
-        max_w = frame_w - 4
-        max_h = frame_h - 4
-        if content.width > max_w or content.height > max_h:
-            scale = min(max_w / content.width, max_h / content.height)
-            content = content.resize(
-                (max(1, round(content.width * scale)), max(1, round(content.height * scale))),
-                Image.Resampling.NEAREST,
-            )
-        x = index * frame_w + (frame_w - content.width) // 2
-        y = (frame_h - content.height) // 2
-        centered.alpha_composite(content, (x, y))
-    tmp = path.with_name(path.stem + ".tmp.png")
-    centered.save(tmp)
-    shutil.move(str(tmp), path)
 
 
 def resolve_source(job: dict, run_dir: Path, allow_decoded_fallback: bool) -> Path:
@@ -154,29 +108,26 @@ def process_job(job: dict, run_dir: Path, key: tuple[int, int, int], tolerance: 
 
     output = (run_dir / str(job["output_path"])).resolve()
     source = resolve_source(job, run_dir, allow_decoded_fallback)
-    frame_size = None
     if kind == "emotion-concept":
         size = CANVAS_SIZE
-        padding = 8
     elif kind == "body":
         size = CANVAS_SIZE
-        padding = 8
     elif kind == "eye-strip":
         size = EYE_STRIP_SIZE
-        frame_size = EYE_FRAME_SIZE
-        padding = 2
     elif kind == "mouth-strip":
         size = MOUTH_STRIP_SIZE
-        frame_size = MOUTH_FRAME_SIZE
-        padding = 2
     else:
         size = DECORATOR_SIZE
-        padding = 8
 
-    normalize(source, output, size, key, tolerance, padding)
-    if frame_size is not None:
-        center_strip_frames(output, frame_size)
-    return {"job_id": job["id"], "kind": kind, "source": str(source), "output": str(output), "size": list(size)}
+    normalize(source, output, size, key, tolerance)
+    return {
+        "job_id": job["id"],
+        "kind": kind,
+        "source": str(source),
+        "output": str(output),
+        "size": list(size),
+        "operation": "chroma-key removal and whole-canvas normalization only",
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -207,6 +158,8 @@ def main() -> None:
         "run_dir": str(run_dir),
         "chroma_key": f"#{key[0]:02X}{key[1]:02X}{key[2]:02X}",
         "tolerance": args.tolerance,
+        "mode": "upstream-preserving",
+        "policy": "No content cropping, per-frame recentering, feature resizing, or drawn repairs. Regenerate upstream jobs when proportions fail.",
         "processed_count": len(processed),
         "processed": processed,
     }

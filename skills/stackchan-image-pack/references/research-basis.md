@@ -27,9 +27,11 @@ From `openai/skills@hatch-pet`:
 - Use flat chroma-key backgrounds and validate transparent output.
 - Default visual target should stay close to hatch-pet pixel/sprite production: compact mascot, simple face, limited palette, crisp outline, flat cel shading, hard extraction edges, and no soft scene illustration.
 - Attach layout guides to strip jobs as construction references, and reject outputs that copy guide marks into the art.
+- Give row/component jobs the accepted visual source of truth before generation; do not generate detached parts from a style prompt alone.
 - Keep prompts concise, state-specific, and sprite-production oriented instead of dumping every QA rule into every prompt.
 - Do not accept deterministic validation alone; visually inspect contact sheets and previews.
 - Repair the smallest failing scope.
+- When repair is needed, regenerate the smallest failing generated source job. Do not substitute locally drawn, tiled, transformed, or code-generated sprite strips for missing or bad `$imagegen` outputs.
 
 From `agent-sprite-forge` and character sprite workflows:
 
@@ -63,6 +65,7 @@ Decision for this skill:
 - Do not generate full-screen high-frame animation sets by default.
 - Prefer 320x240 composition QA plus small transparent eye/mouth/decorator sprites for firmware conversion.
 - Treat 6 mouth frames or 6-7 eye frames as a later firmware/manifest upgrade, not as default generation.
+- Treat face proportion as an upstream generation contract. Component strips must be grounded by canonical style, accepted body base, the matching emotion concept, strip layout guide, and face-proportion guide. Postprocess is not allowed to resize, redraw, or relocate eyes or mouths to make them fit.
 
 ## Skill Choice Summary
 
@@ -81,9 +84,10 @@ Decision for this skill:
 | `$imagegen` is the only normal visual generation layer | `imagegen-jobs.json` marks every visual job with `generation_skill: "$imagegen"` | Aligned |
 | Canonical base locks identity | User chooses `references/canonical-style.png` from three neutral candidates | Aligned |
 | Row jobs attach canonical base and layout guide | Eye/mouth strip jobs attach `canonical-style.png` and the relevant layout-guide PNG | Aligned |
+| Row jobs are grounded in accepted visual source | Eye/mouth jobs also attach the accepted body base, matching emotion concept, and face-proportion guide | Aligned |
 | Selected outputs are copied and jobs marked complete | `record_stackchan_job_output.py` copies selected images, updates status, and can promote the canonical style | Aligned |
 | Pet-safe pixel/sprite prompt language | Default `--style-preset pixel` creates hatch-pet-like compact pixel-art-adjacent prompts | Aligned |
-| Deterministic scripts own geometry | Finalizer splits strips and writes the final manifest; validator checks file counts, sizes, and alpha | Aligned |
+| Deterministic scripts own geometry, not art repair | Postprocess removes chroma key and normalizes whole images; finalizer splits strips and writes the manifest; validator checks file counts, sizes, and alpha | Aligned |
 | Contact sheet and motion previews are required visual QA | Contact sheet plus six expression preview GIFs are part of completion criteria | Aligned |
 | 8x9 Codex pet atlas | Not copied; StackChan needs 320x240 ImageAvatar parts and emotion-mapped face components | Intentionally adapted |
 | Directional locomotion states | Not copied; StackChan uses facial emotions and speech mouth frames | Intentionally adapted |

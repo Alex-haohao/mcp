@@ -266,15 +266,13 @@ Important: structural validation is not release acceptance. An earlier device re
 - source-level overlay already shows eyes too high/close and mouth too high/small;
 - neutral closed mouth content is about `21x7` inside a 96x48 frame, making it weak at 320x240 device scale.
 
-Current repaired IMG4635 status:
+Current IMG4635 status:
 
-- accepted anchors are `leftEye=(136,82)`, `rightEye=(182,82)`, `mouth=(158,109)`;
-- firmware offsets are derived from those anchors as left eye `(-24,-38)`, right eye `(22,-38)`, mouth `(-2,-11)`;
-- `qa/postprocess-summary.json` records the targeted `face-layout-repair` postprocess used for the final decoded eye/mouth strips;
-- `qa/semantic-fit/semantic-fit-report.json` is `ok: true`;
-- `qa/anchor-fit/anchor-fit-report.json` is `ok: true`;
-- `qa/motion-sheet.png` exists and separates eye progression from mouth progression;
-- ImageAvatar firmware built with ESP-IDF v5.5.4 and flashed to `/dev/cu.usbmodem101`; boot logs reached Launcher and created AVATAR/AI.AGENT apps.
+- the previous face-layout repair route is rejected as a reusable workflow;
+- do not use local scripts to redraw, resize, reconstruct, or recenter eyes or mouth;
+- postprocess must run in upstream-preserving mode: chroma-key removal plus whole-canvas/whole-strip normalization only;
+- the next accepted pack must regenerate bad eye/mouth components upstream with `$imagegen`, grounded by canonical style, body base, matching emotion concept, strip guide, and face-proportion guide;
+- firmware offsets/descriptors should be derived only after source-level semantic-fit, anchor-fit, motion-sheet, contact-sheet, and preview QA pass.
 
 Durable rule: do not treat manifest/descriptor validity as visual acceptance. Before regenerating LVGL descriptors or flashing a new pack, run the image-pack semantic-fit and anchor-fit diagnostics and inspect:
 

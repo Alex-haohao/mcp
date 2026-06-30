@@ -10,6 +10,8 @@ run/
     identity-notes.md
     art-direction.md
     canonical-style.png
+    face-proportion-contract.json
+    face-layout.json              # required for firmware handoff or questioned packs
     layout-guides/
   prompts/
     retries/
@@ -39,6 +41,9 @@ run/
     finalize-summary.json
     validation.json
     contact-sheet.png
+    motion-sheet.png
+    semantic-fit/
+    anchor-fit/
     previews/{neutral,happy,angry,sad,doubt,sleepy}.gif
 ```
 
@@ -61,7 +66,7 @@ Complete default output means:
 
 The finalizer derives individual eye and mouth frames from the generated strips. Do not hand-write the frame list or manually copy partial groups into `final/`.
 
-Postprocessing must use the recorded raw `source_path` values in `imagegen-jobs.json` as the source of truth. Reprocessing already-normalized `decoded/` PNGs can introduce crop drift, shrink the body, or move strip content off anchor.
+Postprocessing must use the recorded raw `source_path` values in `imagegen-jobs.json` as the source of truth. It may remove chroma key and normalize whole images to contract dimensions only. It must not crop artwork content, scale individual eyes or mouths, redraw features, or recenter frames. If source proportions fail, regenerate the relevant `$imagegen` job.
 
 ## Visual Contract
 
@@ -72,6 +77,7 @@ Default style is hatch-pet-like pixel-art-adjacent StackChan sprite art:
 - crisp outline, flat cel shading, hard opaque edges;
 - stable scale, anchor, and baseline across strip frames;
 - appealing proportions, clear focal face, expressive eyes and mouth, harmonious palette, and a polished cute StackChan personality;
+- eye and mouth apparent size must be correct in the generated component source, grounded by canonical style, accepted body base, matching emotion concept, strip guide, and face-proportion guide;
 - flat removable chroma-key background or true alpha;
 - no scene illustration, soft shadows, glows, motion blur, guide marks, text, or mixed rendering styles.
 
@@ -112,6 +118,7 @@ Recommended defaults:
 | Mouth strip | 384x48 | 4 horizontal frames. |
 | Decorator | up to 96x96 | Tight crop, transparent. |
 | Contact sheet preview | generated | Diagnostic only. |
+| Motion sheet | generated | Diagnostic only; checks eye and mouth frame progress independently. |
 
 Adjust sizes only before generation starts. Do not mix dimensions inside one pack.
 

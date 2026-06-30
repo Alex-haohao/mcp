@@ -14,6 +14,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import postprocess_stackchan_assets
+
 
 EMOTIONS = ["neutral", "happy", "angry", "sad", "doubt", "sleepy"]
 DECORATORS = ["heart", "sweat", "anger", "tear", "dizzy"]
@@ -66,8 +68,8 @@ def save_chroma_strip_fixture(
         slot_x = index * frame_w * scale
         content_w = max(8, int(frame_w * scale * (0.52 - index * 0.07)))
         content_h = max(6, int(frame_h * scale * (0.48 - index * 0.05)))
-        x0 = slot_x + 5 + index
-        y0 = max(2, (frame_h * scale - content_h) // 2 - 3)
+        x0 = slot_x + (frame_w * scale - content_w) // 2
+        y0 = (frame_h * scale - content_h) // 2
         draw.rounded_rectangle(
             (x0, y0, x0 + content_w, y0 + content_h),
             radius=max(2, content_h // 5),
@@ -170,6 +172,14 @@ def assert_hatch_pet_alignment(run_dir: Path) -> None:
         roles = " ".join(image["role"] for image in job["input_images"])
         assert "layout guide" in roles
         assert "canonical" in roles
+        assert "face-proportion" in roles
+
+    eye_prompt = (run_dir / "prompts/parts/eyes-neutral-left.md").read_text(encoding="utf-8")
+    mouth_prompt = (run_dir / "prompts/parts/mouth-neutral.md").read_text(encoding="utf-8")
+    for prompt_text in (eye_prompt, mouth_prompt):
+        assert "upstream generation contract" in prompt_text
+        assert "Regenerate this component" in prompt_text
+        assert "Do not rely on postprocessing" in prompt_text
 
 
 def assert_canonical_recorded(run_dir: Path) -> None:
@@ -224,6 +234,23 @@ def assert_frame_content_centered(strip_path: Path, frame_size: tuple[int, int],
         assert abs(center_y - frame_h / 2) <= 3, (strip_path, index, bbox)
 
 
+def assert_postprocess_preserves_strip_layout(tmp_root: Path) -> None:
+    source = tmp_root / "preserve-source.png"
+    output = tmp_root / "preserve-output.png"
+    image = Image.new("RGBA", (384, 96), (0, 255, 0, 255))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((20, 30, 60, 58), fill=(40, 80, 180, 255))
+    image.save(source)
+
+    postprocess_stackchan_assets.normalize(source, output, (192, 48), (0, 255, 0), 0)
+
+    with Image.open(output) as opened:
+        alpha_box = opened.convert("RGBA").getchannel("A").getbbox()
+    assert alpha_box is not None
+    assert alpha_box[0] <= 12, alpha_box
+    assert alpha_box[2] <= 32, alpha_box
+
+
 def assert_postprocessed_decoded_assets(run_dir: Path) -> None:
     body = run_dir / "decoded/parts/body-base.png"
     with Image.open(body) as image:
@@ -257,6 +284,7 @@ def main() -> None:
     tmp_root = Path(tempfile.mkdtemp(prefix="stackchan-pack-selftest-"))
     try:
         run_dir = tmp_root / "run"
+        assert_postprocess_preserves_strip_layout(tmp_root)
         run_cmd(
             [
                 sys.executable,

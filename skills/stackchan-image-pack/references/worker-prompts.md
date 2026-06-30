@@ -17,9 +17,11 @@ Context files:
 Input images:
 - <absolute path> - <role>
 
-Use $imagegen only. Read the prompt and context files, then attach every listed input image. If $imagegen returns a transport-level Bad Request, retry once with the retry prompt and the same input images.
+Use $imagegen only. Read the prompt and context files, then attach every listed input image. For eye and mouth jobs, the body base, matching emotion concept, strip guide, and face-proportion guide are required inputs; do not generate from the canonical style alone. If $imagegen returns a transport-level Bad Request, retry once with the retry prompt and the same input images.
 
-Before returning, visually check: exact requested canvas or strip size, correct frame count, same canonical identity, hatch-pet-like pixel/sprite style, flat chroma background or alpha, no copied layout-guide marks, no text, no scenery, no shadows/glows, no clipping, no mixed style, and strong appeal at 320x240.
+Before returning, visually check: exact requested canvas or strip size, correct frame count, same canonical identity, hatch-pet-like pixel/sprite style, flat chroma background or alpha, no copied layout-guide marks, no text, no scenery, no shadows/glows, no clipping, no mixed style, and strong appeal at 320x240. For eyes and mouths, also check that the generated component already has correct apparent size, line weight, position compatibility, and readability against the attached face-proportion guide and emotion concept.
+
+Reject and regenerate the same visual job if it would require local drawing, scripted scaling, per-frame recentering, or manual relocation to fit the face.
 
 Do not edit manifests, copy files into decoded, promote canonical style, run deterministic scripts, repair other jobs, or inspect unrelated files. Do not include Markdown image previews, base64, or extra attachments in the final response.
 
@@ -42,9 +44,9 @@ Finalize summary: <absolute run dir>/qa/finalize-summary.json
 Identity notes: <absolute run dir>/references/identity-notes.md
 Art direction: <absolute run dir>/references/art-direction.md
 
-Inspect the contact sheet, all preview GIFs, component strips, and decorators. Confirm all six emotions are the same StackChan character, preserve hatch-pet-like pixel/sprite style, have appealing proportions, clear silhouette, harmonious palette, expressive readable eyes and mouth, stable anchors, no size popping, no copied guide marks, no chroma residue or halos, no off-face overlays, no weak decorators, and no mixed rendering styles.
+Inspect the contact sheet, semantic-fit overlay when present, anchor-fit concept-vs-overlay images when present, motion sheet, all preview GIFs, component strips, and decorators. Confirm all six emotions are the same StackChan character, preserve hatch-pet-like pixel/sprite style, have appealing proportions, clear silhouette, harmonious palette, expressive readable eyes and mouth, stable anchors, no size popping, no copied guide marks, no chroma residue or halos, no off-face overlays, no weak decorators, and no mixed rendering styles.
 
-Fail the pack if it is complete but visually bland, inconsistent, hard to read at device size, off-style, or not cute/polished enough for the chosen art direction.
+Fail the pack if it is complete but visually bland, inconsistent, hard to read at device size, off-style, or not cute/polished enough for the chosen art direction. Fail eye/mouth issues at the source layer: recommend regenerating the smallest bad $imagegen job or calibrating anchors, not local hardcoded repair.
 
 Do not edit files, queue repairs, package, clean up, or inspect unrelated files.
 
