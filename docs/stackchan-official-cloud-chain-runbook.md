@@ -155,6 +155,12 @@ After decryption, the App takes the first 12 characters as the device MAC. If
 the firmware returns the placeholder string, the App shows
 `Failed to process device data` before any backend bind request is sent.
 
+The RSA-2048 handshake response is larger than a conservative BLE notification
+payload. To keep iOS reliable, the firmware chunks long config notifications
+and the App buffers config-channel bytes until it has a complete JSON object
+before parsing. Without both sides, iPhone can surface
+`Failed to parse device data` because it tries to parse a partial JSON fragment.
+
 Flash after regeneration:
 
 ```bash
@@ -495,6 +501,9 @@ Latest smoke result:
 - Firmware/App add-device BLE handshake on 2026-07-01: passed. The self-built
   firmware returned `notifyState` type `4`, and local decryption with
   `stackchan_blue_private.pem` produced `441BF6DF62F8|<timestamp>`.
+- Add-device parse fix on 2026-07-01: App tests pass for split BLE JSON frames
+  and long handshake-sized responses; firmware rebuild and flash succeeded with
+  long config notifications chunked into safe BLE packets.
 
 Local environment state:
 
